@@ -2,16 +2,10 @@ package scheduler.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import scheduler.models.Account;
 import scheduler.models.Genetic;
 import scheduler.models.Resource;
@@ -144,6 +137,11 @@ public class SchedulesController {
 		scheduleService.deleteSlot(slotId);
 	}
 	
+	@RequestMapping(value = "/{accountId}/schedules/{id}/resources/{resourceId}", method = RequestMethod.DELETE)
+	public @ResponseBody void deleteResource(@PathVariable Integer resourceId) {
+		scheduleService.deleteResource(resourceId);
+	}
+	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources", method = RequestMethod.POST)
 	public @ResponseBody void createResource(@PathVariable Integer id, @RequestBody Resource data) {
@@ -163,7 +161,7 @@ public class SchedulesController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/generate", method = RequestMethod.POST)
-	public @ResponseBody void generate(@PathVariable Integer id, @RequestBody Genetic params) throws CloneNotSupportedException {
+	public @ResponseBody void generate(@PathVariable Long accountId, @PathVariable Integer id, @RequestBody Genetic params) throws CloneNotSupportedException {
 		Schedule schedule = scheduleService.getSchedule(id);
 		
 		Genetic genetic = new Genetic(schedule);
@@ -173,6 +171,9 @@ public class SchedulesController {
 		genetic.setPopulationSize(params.getPopulationSize());
 		
 		schedule = genetic.optimize();
+		
+		Account owner = scheduleService.findAccount(accountId);
+		schedule.setOwner(owner);
 		schedule.setDays(params.getDays());
 		schedule.setHours(params.getHours());
 		schedule.setIterations(params.getIterations());

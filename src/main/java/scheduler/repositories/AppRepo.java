@@ -25,4 +25,5 @@ public interface AppRepo {
 	List<Resource> getResourcesByType(Integer id, String type);
 	void deleteSchedule(Integer id);
 	void deleteSlot(Integer id);
+	void deleteResource(Integer id);
 }

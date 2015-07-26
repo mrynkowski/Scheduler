@@ -5,6 +5,8 @@
 <div class="col-sm-2">
 		<div class="toolbar">
 			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#resModal"></input>
+			<input ng-show="!deleteButtons" type="button" class="btn btn-primary btn-medium" value="Edit" ng-click="showDeleteButtons()"></input>
+			<input ng-show="deleteButtons" type="button" class="btn btn-primary btn-medium" value="Cancel" ng-click="hideDeleteButtons()"></input>
 				<div class="modal" id="resModal" tabindex="-1"
 					role="dialog" aria-labelledby="basicModal" aria-hidden="true">
 					<div class="modal-dialog">
@@ -41,10 +43,15 @@
 				</div>
 		</div>
 	<form class="form-horizontal">
-		<ul class="list-group">
-			<li ng-class="{active : element.id == activeElement}" class="list-group-item" ng-repeat="element in resources | orderBy: 'name'" 
-				ng-click=fetchGrid(element.id)>{{element.name}}</li>
-		</ul>
+		<div class="list-group">
+			<div ng-class="{active : element.id == activeElement}" class="list-group-item" ng-repeat="element in resources | orderBy: 'name'" 
+				ng-click=fetchGrid(element.id)>
+				{{element.name}}
+			<input ng-show="deleteButtons" style="float: right;" class="btn btn-xs btn-danger del btn-small" type="text" 
+				value="Delete" ng-click="deleteResource(element)">
+			</div>
+
+		</div>
 	</form>
 </div>
 <div class="col-sm-10">
@@ -56,11 +63,11 @@
 		<thead>
 			<tr>
 				<th class="h"></th>
-				<th class="col-sm-2">Monday</th>
-				<th class="col-sm-2">Tuesday</th>
-				<th class="col-sm-2">Wednesday</th>
-				<th class="col-sm-2">Thursday</th>
-				<th class="col-sm-2">Friday</th>
+				<th>Monday</th>
+				<th>Tuesday</th>
+				<th>Wednesday</th>
+				<th>Thursday</th>
+				<th>Friday</th>
 			</tr>
 		</thead>
 		<tbody>

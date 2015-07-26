@@ -31,6 +31,7 @@ public class AppRepoImpl implements AppRepo{
         return em.find(Account.class, id);
     }
 
+	@Override
 	public Schedule getSchedule(Integer id) {
 		Schedule s = em.find(Schedule.class, id);
 		s.getResources().size();
@@ -53,11 +54,8 @@ public class AppRepoImpl implements AppRepo{
         query.setParameter(1, name);
         return query.getResultList();
 	}
-	
-	public List<Schedule> getSchedules() {
-		return em.createQuery("SELECT s FROM Schedule s").getResultList();
-	}
 
+	@Override
 	public Object getResult(String query){
 		return em.createQuery(query).getResultList();
 	}
@@ -89,6 +87,7 @@ public class AppRepoImpl implements AppRepo{
 	}
 
 	@Transactional
+	@Override
 	public Schedule updateSchedule(Schedule schedule) {
 		em.merge(schedule);
 		return schedule;
@@ -109,12 +108,14 @@ public class AppRepoImpl implements AppRepo{
 	}
 
 	@Transactional
+	@Override
 	public void deleteSchedule(Integer id) {
 		Schedule schedule = em.find(Schedule.class, id);
 		em.remove(schedule);
 	}
 
 	@Transactional
+	@Override
 	public void createSlot(Integer id, Slot slot) {
 		Schedule schedule = em.getReference(Schedule.class, id);
 		slot.setSchedule(schedule);
@@ -122,6 +123,7 @@ public class AppRepoImpl implements AppRepo{
 	}
 
 	@Transactional
+	@Override
 	public void createSlotCopy(Integer id) {
 		Slot clone = em.find(Slot.class, id);
 		em.detach(clone);
@@ -130,6 +132,7 @@ public class AppRepoImpl implements AppRepo{
 	}
 
 	@Transactional
+	@Override
 	public void createResource(Integer id, Resource resource) {
 		Schedule schedule = em.getReference(Schedule.class, id);
 		resource.setSchedule(schedule);
@@ -137,6 +140,7 @@ public class AppRepoImpl implements AppRepo{
 	}
 
 	@Transactional
+	@Override
 	public void deleteSlot(Integer id) {
 		Slot slot = em.find(Slot.class, id);
 		em.remove(slot);
@@ -152,6 +156,13 @@ public class AppRepoImpl implements AppRepo{
         } else {
             return accounts.get(0);
         }
+	}
+
+	@Transactional
+	@Override
+	public void deleteResource(Integer id) {
+		Resource resource = em.find(Resource.class, id);	
+		em.remove(resource);
 	}
 
 }

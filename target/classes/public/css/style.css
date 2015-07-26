@@ -65,6 +65,10 @@ body {
 	margin-bottom: 0;
 }
 
+.h{
+	width: 20px;
+}
+
 .placeholder {
 	margin-bottom: 20px;
 }
@@ -75,7 +79,7 @@ body {
 }
 
 .btn-medium {
-	min-width: 120px;
+	min-width: 80px;
 }
 
 .btn-small {

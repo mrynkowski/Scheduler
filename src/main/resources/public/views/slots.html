@@ -4,6 +4,8 @@
 </div>
 		<div class="toolbar col-sm-2">
 			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#slotModal"></input>
+			<input ng-show="!deleteSlotButtons" type="button" class="btn btn-primary btn-medium" value="Edit" ng-click="showSlotDeleteButtons()"></input>
+			<input ng-show="deleteSlotButtons" type="button" class="btn btn-primary btn-medium" value="Cancel" ng-click="hideSlotDeleteButtons()"></input>
 				<div class="modal" id="slotModal" tabindex="-1"
 					role="dialog" aria-labelledby="basicModal" aria-hidden="true">
 					<div class="modal-dialog">
@@ -69,7 +71,7 @@
 				<td>{{slot.students}}</td>
 				<td>{{slot.teacher}}</td>
 				<td>{{slot.duration}}</td>
-				<td style="width: 10px;"><input class="btn btn-xs btn-danger del btn-small" type="text" value="Delete" ng-click="deleteSlot(slot)"></td>
+				<td style="width: 77px; height: 39px"><input ng-show="deleteSlotButtons" class="btn btn-xs btn-danger del btn-small" type="text" value="Delete" ng-click="deleteSlot(slot)"></td>
 			</tr>
 		</tbody>
 	</table>

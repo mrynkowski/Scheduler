@@ -1,15 +1,14 @@
 module.controller("Schedule", function($scope, $http, menu, $location, $rootScope, $routeParams, $filter) { 
 	
 	var id = $routeParams.schedule;
-	var user = $routeParams.user;
-	console.log(id);
-	console.log(user);
-	
+	var user = $routeParams.user;	
 	var accountId = $rootScope.accountId;
+	$scope.deleteButtons = false;
+	$scope.deleteSlotButtons = false; 
 	
 	$scope.deleteSchedule = function() {
 		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id).success(function() {
-			$location.path('/User');
+			$location.path('/user/' + $routeParams.user);
 		});
 	};
 	
@@ -19,12 +18,35 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		});
 	};
 	
+	
+	$scope.showDeleteButtons = function(){
+		$scope.deleteButtons = true;
+	};
+	
+	$scope.hideDeleteButtons = function(){
+		$scope.deleteButtons = false;
+	};
+	
+	$scope.showSlotDeleteButtons = function(){
+		$scope.deleteSlotButtons = true;
+	};
+	
+	$scope.hideSlotDeleteButtons = function(){
+		$scope.deleteSlotButtons = false;
+	};
+	
+	
 	$scope.fetchResources = function() {
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/resources').success(function(data){
 			$scope.resources = data;
 		});
 	};	
 	
+	$scope.deleteResource = function(resource) {
+		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id + '/resources/' + resource.id).success(function() {
+			$scope.fetchResources();
+		});
+	};
 	
 	$scope.params = {};
 	$scope.tab = {};
