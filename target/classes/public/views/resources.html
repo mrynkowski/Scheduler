@@ -1,0 +1,81 @@
+<div class="col-sm-12">
+<div class="alert alert-info" ng-show="resources.length == 0">
+	No resources found
+</div>
+<div class="col-sm-2">
+		<div class="toolbar">
+			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#resModal"></input>
+				<div class="modal" id="resModal" tabindex="-1"
+					role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">New Resource</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Name</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" ng-model="res.name">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Type</label>
+										<div class="col-sm-10">
+										    <select class="form-control" ng-model="res.type">
+										    	<option value="students">Students</option>
+										    	<option value="teacher">Teacher</option>
+										    	<option value="room">Room</option>
+										    </select>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default btn-medium" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary btn-medium" ng-click="createRes(res)" data-dismiss="modal">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	<form class="form-horizontal">
+		<ul class="list-group">
+			<li ng-class="{active : element.id == activeElement}" class="list-group-item" ng-repeat="element in resources | orderBy: 'name'" 
+				ng-click=fetchGrid(element.id)>{{element.name}}</li>
+		</ul>
+	</form>
+</div>
+<div class="col-sm-10">
+	<div class="alert alert-info" ng-show="grid == undefined && resources.length > 0">
+		Choose a resource
+	</div>
+	<p class="lead">{{element.name}}</p>
+	<table ng-show="grid.length > 0" class="table table-bordered" style="font-size: 12px;">
+		<thead>
+			<tr>
+				<th class="h"></th>
+				<th class="col-sm-2">Monday</th>
+				<th class="col-sm-2">Tuesday</th>
+				<th class="col-sm-2">Wednesday</th>
+				<th class="col-sm-2">Thursday</th>
+				<th class="col-sm-2">Friday</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="row in grid">
+				<td>{{$index}}<br>
+				<br>
+				<br>
+				<br></td>
+				<td style="white-space: pre;">{{row[0]}}</td>
+				<td style="white-space: pre;">{{row[1]}}</td>
+				<td style="white-space: pre;">{{row[2]}}</td>
+				<td style="white-space: pre;">{{row[3]}}</td>
+				<td style="white-space: pre;">{{row[4]}}</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+</div>

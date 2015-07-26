@@ -1,0 +1,77 @@
+<div class="col-sm-12">
+<div class="alert alert-info" ng-show="slots.length == 0">
+    No slots found
+</div>
+		<div class="toolbar col-sm-2">
+			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#slotModal"></input>
+				<div class="modal" id="slotModal" tabindex="-1"
+					role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">New Slot</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Subject</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" ng-model="slot.subject">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Students</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" ng-model="slot.students">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Teacher</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" ng-model="slot.teacher">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Duration</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" ng-model="slot.duration">
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default btn-medium" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary btn-medium" ng-click="createSlot(slot)" data-dismiss="modal">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+<form>
+	<table class="table table-bordered table-striped" ng-show="slots.length > 0">
+		<thead>
+			<tr>
+				<th><a href="" ng-click="reverse=!reverse; order('day', reverse)">Day</th>
+				<th><a href="" ng-click="reverse=!reverse; order('hour', reverse)">Hour</th>
+				<th><a href="" ng-click="reverse=!reverse; order('room', reverse)">Room</th>
+				<th><a href="" ng-click="reverse=!reverse; order('subject', reverse)">Subject</th>
+				<th><a href="" ng-click="reverse=!reverse; order('students', reverse)">Students</th>
+				<th><a href="" ng-click="reverse=!reverse; order('teacher', reverse)">Teacher</th>
+				<th><a href="" ng-click="reverse=!reverse; order('duration', reverse)">Duration</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="slot in slots">
+				<td>{{slot.day}}</td>
+				<td>{{slot.hour}}</td>
+				<td>{{slot.room}}</td>
+				<td>{{slot.subject}}</td>
+				<td>{{slot.students}}</td>
+				<td>{{slot.teacher}}</td>
+				<td>{{slot.duration}}</td>
+				<td style="width: 10px;"><input class="btn btn-xs btn-danger del btn-small" type="text" value="Delete" ng-click="deleteSlot(slot)"></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+</div>
