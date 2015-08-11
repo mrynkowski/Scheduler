@@ -3,6 +3,7 @@ package scheduler.web;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
 import scheduler.models.Account;
 import scheduler.models.Genetic;
 import scheduler.models.Resource;
 import scheduler.models.Schedule;
 import scheduler.models.Slot;
+import scheduler.models.Subject;
 import scheduler.repositories.AppRepo;
 import scheduler.security.SecurityHelper;
 
@@ -115,6 +118,12 @@ public class SchedulesController {
 		Schedule schedule = scheduleService.getSchedule(id);
 		return schedule.getResources();
 	}
+	
+	@RequestMapping(value = "/{accountId}/schedules/{id}/subjects", method = RequestMethod.GET)
+	public @ResponseBody List<Subject> getSubjects(@PathVariable Integer id) {
+		Schedule schedule = scheduleService.getSchedule(id);
+		return schedule.getSubjects();
+	}
 
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources/{resid}", method = RequestMethod.GET)
 	public @ResponseBody ArrayList<ArrayList<String>> grids(@PathVariable Integer resid, @PathVariable Integer id) {
@@ -142,10 +151,21 @@ public class SchedulesController {
 		scheduleService.deleteResource(resourceId);
 	}
 	
+	@RequestMapping(value = "/{accountId}/schedules/{id}/subjects/{subjectId}", method = RequestMethod.DELETE)
+	public @ResponseBody void deleteSubject(@PathVariable Integer subjectId) {
+		scheduleService.deleteSubject(subjectId);
+	}
+	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources", method = RequestMethod.POST)
 	public @ResponseBody void createResource(@PathVariable Integer id, @RequestBody Resource data) {
 		scheduleService.createResource(id, data);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/{accountId}/schedules/{id}/subjects", method = RequestMethod.POST)
+	public @ResponseBody void createSubject(@PathVariable Integer id, @RequestBody Subject data) {
+		scheduleService.createSubject(id, data);
 	}
 	
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.GET)

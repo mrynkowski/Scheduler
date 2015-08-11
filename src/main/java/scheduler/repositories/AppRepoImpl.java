@@ -2,18 +2,16 @@ package scheduler.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import scheduler.models.Account;
 import scheduler.models.Resource;
 import scheduler.models.Schedule;
 import scheduler.models.Slot;
+import scheduler.models.Subject;
 
 @Repository
 public class AppRepoImpl implements AppRepo{
@@ -165,4 +163,18 @@ public class AppRepoImpl implements AppRepo{
 		em.remove(resource);
 	}
 
+	@Transactional
+	@Override
+	public void createSubject(Integer id, Subject data) {
+		Schedule schedule = em.getReference(Schedule.class, id);
+		data.setSchedule(schedule);
+		em.persist(data);
+	}
+
+	@Transactional
+	@Override
+	public void deleteSubject(Integer subjectId) {
+		Subject subject = em.find(Subject.class, subjectId);	
+		em.remove(subject);
+	}
 }

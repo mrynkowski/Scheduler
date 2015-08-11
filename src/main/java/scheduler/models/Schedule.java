@@ -24,9 +24,8 @@ public class Schedule implements Cloneable{
 	List<Resource> resources;
 
 	@JsonIgnore
-	@ElementCollection
-	@CollectionTable(name="subjects", joinColumns=@JoinColumn(name="schedule_id"))
-	List<String> subjects = new ArrayList<String>();
+	@OneToMany(orphanRemoval=true, targetEntity=Subject.class, cascade = CascadeType.ALL, mappedBy = "schedule")
+	List<Subject> subjects;
 
 	@JsonIgnore
 	@OneToMany(orphanRemoval=true, targetEntity=Slot.class, cascade = CascadeType.ALL, mappedBy = "schedule")
@@ -61,12 +60,12 @@ public class Schedule implements Cloneable{
 
 	public Schedule(String name) {
 		this.name = name;
-		this.subjects = new ArrayList<String>();
+		this.subjects = new ArrayList<Subject>();
 		this.slots = new ArrayList<Slot>();
 		this.resources = new ArrayList<Resource>();
 	}
 
-	public Schedule(Integer id, List<Resource> resources, List<String> subjects, List<Slot> slots) {
+	public Schedule(Integer id, List<Resource> resources, List<Subject> subjects, List<Slot> slots) {
 		super();
 		this.id = id;
 		this.subjects = subjects;
@@ -140,11 +139,11 @@ public class Schedule implements Cloneable{
 		this.resources = resources;
 	}
 
-	public List<String> getSubjects() {
+	public List<Subject> getSubjects() {
 		return subjects;
 	}
 
-	public void setSubjects(List<String> subjects) {
+	public void setSubjects(List<Subject> subjects) {
 		this.subjects = subjects;
 	}
 

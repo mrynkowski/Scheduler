@@ -5,6 +5,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	var accountId = $rootScope.accountId;
 	$scope.deleteButtons = false;
 	$scope.deleteSlotButtons = false; 
+	$scope.deleteSubjectButtons = false; 
 	
 	$scope.deleteSchedule = function() {
 		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id).success(function() {
@@ -18,6 +19,11 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		});
 	};
 	
+	$scope.deleteSubject = function(subject) {
+		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id + '/subjects/' + subject.id).success(function() {
+			$scope.fetchSubjects();
+		});
+	};
 	
 	$scope.showDeleteButtons = function(){
 		$scope.deleteButtons = true;
@@ -35,10 +41,23 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		$scope.deleteSlotButtons = false;
 	};
 	
+	$scope.showSubjectDeleteButtons = function(){
+		$scope.deleteSubjectButtons = true;
+	};
+	
+	$scope.hideSubjectDeleteButtons = function(){
+		$scope.deleteSubjectButtons = false;
+	};
 	
 	$scope.fetchResources = function() {
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/resources').success(function(data){
 			$scope.resources = data;
+		});
+	};	
+	
+	$scope.fetchSubjects = function() {
+		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/subjects').success(function(data){
+			$scope.subjects = data;
 		});
 	};	
 	
@@ -76,6 +95,12 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		});
 	};
 	
+	$scope.createSubject = function(subject) {
+		$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/subjects', subject).success(function() {
+			$scope.fetchSubjects();
+		});
+	};
+	
 	$scope.fetchSchedule();
 	
 	var orderBy = $filter('orderBy');
@@ -97,6 +122,13 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			$scope.slots = data;
 		});
 	};
+	
+	$scope.fetchSubjects = function() {
+		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/subjects').success(function(data){
+			$scope.subjects = data;
+		});
+	};
+	
 	
 	$scope.generate = function(params) {
 		$http.post('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/generate', params).success(function(){

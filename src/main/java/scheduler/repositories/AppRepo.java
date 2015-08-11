@@ -6,6 +6,7 @@ import scheduler.models.Account;
 import scheduler.models.Resource;
 import scheduler.models.Schedule;
 import scheduler.models.Slot;
+import scheduler.models.Subject;
 
 public interface AppRepo {
 	Account findAccount(Long id);
@@ -26,4 +27,6 @@ public interface AppRepo {
 	void deleteSchedule(Integer id);
 	void deleteSlot(Integer id);
 	void deleteResource(Integer id);
+	void createSubject(Integer id, Subject data);
+	void deleteSubject(Integer subjectId);
 }

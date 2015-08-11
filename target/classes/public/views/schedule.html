@@ -3,6 +3,7 @@
 		<li ng-class="{active: tab.active == 'summary'}"><a href="#" ng-click='tab.active="summary"; fetchSchedule()'>Summary</a></li>
 		<li ng-class="{active: tab.active == 'slots'}"><a href="#" ng-click='tab.active="slots"; fetchSlots()'>Slots</a></li>
 		<li ng-class="{active: tab.active == 'resources'}"><a href="#" ng-click='tab.active="resources"; fetchResources()'>Resources</a></li>
+		<li ng-class="{active: tab.active == 'subjects'}"><a href="#" ng-click='tab.active="subjects"; fetchSubjects()'>Subjects</a></li>
 	</ul>
 	<div class="mainNew "ng-switch='tab.active'>
 		<div ng-switch-when="slots">
@@ -14,5 +15,8 @@
 		<div ng-switch-when="resources">
 			<div ng-include="'/views/resources.html'"></div>
 		</div>
+		<div ng-switch-when="subjects">
+			<div ng-include="'/views/subjects.html'"></div>
+		</div>		
 	</div>
 </div>
