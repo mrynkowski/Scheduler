@@ -7,6 +7,10 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.deleteSlotButtons = false; 
 	$scope.deleteSubjectButtons = false; 
 	
+	$http.get('/rest/account/' + $rootScope.name).success(function(data) {
+		$rootScope.accountId = data.id;
+	});
+	
 	$scope.deleteSchedule = function() {
 		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id).success(function() {
 			$location.path('/user/' + $routeParams.user);
@@ -52,15 +56,26 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.fetchResources = function() {
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/resources').success(function(data){
 			$scope.resources = data;
+			
+			$scope.teachers = [];
+			$scope.groups = [];
+			data.forEach(function(entry) {
+			    if (entry.type == 'teacher') {
+			    	$scope.teachers.push(entry);
+			    } else if (entry.type == 'students') {
+			    	$scope.groups.push(entry);
+			    }
+			});
 		});
 	};	
 	
 	$scope.fetchSubjects = function() {
+		alert("fetched");
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/subjects').success(function(data){
 			$scope.subjects = data;
 		});
 	};	
-	
+		
 	$scope.deleteResource = function(resource) {
 		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id + '/resources/' + resource.id).success(function() {
 			$scope.fetchResources();
@@ -133,9 +148,15 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.generate = function(params) {
 		$http.post('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/generate', params).success(function(){
 			$scope.fetchSchedule();
+			$scope.fetchResources();
+			$scope.fetchSubjects();
+			$scope.fetchSlots();
 		});
 	};
 	
+	$scope.fetchResources();
+	$scope.fetchSubjects();
+	$scope.fetchSlots();
 	
 	$scope.drawChart = function(){
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){

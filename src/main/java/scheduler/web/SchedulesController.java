@@ -95,10 +95,12 @@ public class SchedulesController {
 			}
 			List<Slot> data = getSlotsBy(name, slots);
 			for (Slot slot : data) {
-				grid.get(slot.hour).set(
-						slot.day,
-						slot.subject + "\n" + slot.students + "\n"
-								+ slot.teacher + "\n" + slot.room);
+				if(slot.hour != null){
+					grid.get(slot.hour).set(
+							slot.day,
+							slot.subject + "\n" + slot.students + "\n"
+									+ slot.teacher + "\n" + slot.room);
+				}
 			}
 			return grid;
 	}
@@ -106,7 +108,7 @@ public class SchedulesController {
 	public List<Slot> getSlotsBy(String name, List<Slot> slots)  {
 		List<Slot> list = new ArrayList<Slot>();
 		for (Slot slot : slots) {
-			if (slot.students.equals(name) || slot.teacher.equals(name) || slot.room.equals(name)) {
+			if (slot.students.equals(name) || slot.teacher.equals(name) || name.equals(slot.room)) {
 				list.add(slot);
 			}
 		}
