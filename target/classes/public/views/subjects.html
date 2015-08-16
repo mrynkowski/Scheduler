@@ -1,9 +1,9 @@
 <div class="col-sm-2">
 	<div class="toolbar">
-			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#resModal"></input>
+			<input type="button" class="btn btn-success btn-medium" value="New" data-toggle="modal" data-target="#subjectModal"></input>
 			<input ng-show="!deleteSubjectButtons" type="button" class="btn btn-primary btn-medium" value="Edit" ng-click="showSubjectDeleteButtons()"></input>
 			<input ng-show="deleteSubjectButtons" type="button" class="btn btn-primary btn-medium" value="Cancel" ng-click="hideSubjectDeleteButtons()"></input>
-				<div class="modal" id="resModal" tabindex="-1"
+				<div class="modal" id="subjectModal" tabindex="-1"
 					role="dialog" aria-labelledby="basicModal" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -11,6 +11,9 @@
 								<h4 class="modal-title">New Subject</h4>
 							</div>
 							<div class="modal-body">
+								<div ng-show="subjectAlert" id="formAlert" class="alert alert-warning fade in">						        	
+							        <strong>Warning!</strong> Make sure all fields are filled and try again.
+						        </div>
 								<form class="form-horizontal">
 									<div class="form-group">
 										<label class="col-sm-2 control-label">Name</label>
@@ -22,7 +25,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-medium" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary btn-medium" ng-click="createSubject(subject)" data-dismiss="modal">Save</button>
+								<button type="button" class="btn btn-primary btn-medium" ng-click="createSubject(subject)">Save</button>
 							</div>
 						</div>
 					</div>

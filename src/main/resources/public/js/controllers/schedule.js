@@ -1,17 +1,20 @@
 module.controller("Schedule", function($scope, $http, menu, $location, $rootScope, $routeParams, $filter) { 
-	
 	var id = $routeParams.schedule;
 	var user = $routeParams.user;	
 	var accountId = $rootScope.accountId;
 	$scope.deleteButtons = false;
 	$scope.deleteSlotButtons = false; 
 	$scope.deleteSubjectButtons = false; 
+	$scope.resourceAlert = false;
+	$scope.slotAlert = false;
+	$scope.subjectAlert = false;
 	
 	$http.get('/rest/account/' + $rootScope.name).success(function(data) {
 		$rootScope.accountId = data.id;
 	});
 	
 	$scope.deleteSchedule = function() {
+		$('#deleteModal').modal('hide');
 		$http.delete('/rest/'+ $rootScope.accountId +'/schedules/' + $scope.schedule.id).success(function() {
 			$location.path('/user/' + $routeParams.user);
 		});
@@ -99,21 +102,39 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	};
 	
 	$scope.createSlot = function(slot) {
-		$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/slots', slot).success(function() {
-			$scope.fetchSlots();
-		});
+		if (slot != undefined && slot.subject != undefined && slot.students != undefined && slot.teacher != undefined && slot.duration != undefined) {
+				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/slots', slot).success(function() {
+					$scope.fetchSlots();
+					$scope.slotAlert = false;
+					$('#slotModal').modal('hide');
+				});
+		} else {
+			$scope.slotAlert = true;
+		}
 	};
 	
 	$scope.createRes = function(res) {
-		$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/resources', res).success(function() {
-			$scope.fetchResources();
-		});
+		if (res != undefined && res.name != undefined && res.type != undefined && res.name.length > 0) {
+				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/resources', res).success(function() {
+					$scope.fetchResources();
+					$scope.resourceAlert = false;
+					$('#resModal').modal('hide');
+				});	
+		} else {
+			$scope.resourceAlert = true;
+		}
 	};
 	
-	$scope.createSubject = function(subject) {
-		$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/subjects', subject).success(function() {
-			$scope.fetchSubjects();
-		});
+	$scope.createSubject = function(subject) {	
+		if (subject != undefined && subject.name != undefined && subject.name.length > 0) {
+				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/subjects', subject).success(function() {
+					$scope.fetchSubjects();
+					$scope.subjectAlert = false;
+					$('#subjectModal').modal('hide');
+				});
+		} else {
+			$scope.subjectAlert = true;
+		}
 	};
 	
 	$scope.fetchSchedule();

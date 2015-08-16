@@ -16,6 +16,9 @@
 						<h4 class="modal-title">New Resource</h4>
 					</div>
 					<div class="modal-body">
+						        <div ng-show="resourceAlert" id="formAlert" class="alert alert-warning fade in">						        	
+							        <strong>Warning!</strong> Make sure all fields are filled and try again.
+						        </div>
 						<form class="form-horizontal">
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Name</label>
@@ -39,7 +42,7 @@
 						<button type="button" class="btn btn-default btn-medium"
 							data-dismiss="modal">Close</button>
 						<button type="button" class="btn btn-primary btn-medium"
-							ng-click="createRes(res)" data-dismiss="modal">Save</button>
+							ng-click="createRes(res)">Save</button>
 					</div>
 				</div>
 			</div>

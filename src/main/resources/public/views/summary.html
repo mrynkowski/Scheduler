@@ -2,36 +2,47 @@
 	<p class="lead"></p>
 	<div class="toolbar">
 		<label class="toolbar_text">Schedule: {{schedule.name}}</label>
-		<input type="button" class="btn btn-danger new btn-medium" value="Delete" ng-click="deleteSchedule()">
+		<input type="button" class="btn btn-danger new btn-medium" data-toggle="modal" data-target="#deleteModal" value="Delete">
+			<div class="modal" id="deleteModal" tabindex="-1" role="dialog"
+				aria-labelledby="basicModal" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Confirm the delete action</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default btn-medium" data-dismiss="modal">Close</button>
+						<input type="button" class="btn btn-danger new btn-medium" value="Delete" ng-click="deleteSchedule()" data-dismiss="modal">
+					</div>
+				</div>
+			
+			</div>
+		</div>
 	</div>
 	<p class="lead">Rate: {{schedule.rate}}</p>
-	
 	<form class="form-horizontal">
 		<div class="form-group">
 			<label class="col-sm-4 control-label">Days:</label>
 			<div class="col-sm-8">
-				<input type="text" class="form-control"
-					ng-model="params.days">
+				<input type="number" class="form-control" name="quantity" min="1" max="5" ng-model="params.days">
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-4 control-label">Hours:</label>
 			<div class="col-sm-8">
-				<input type="text" class="form-control"
-					ng-model="params.hours">
+				<input type="number" class="form-control" name="quantity" min="1" max="15" ng-model="params.hours">
 			</div>
 		</div>			
 		<div class="form-group">
 			<label class="col-sm-4 control-label">Population:</label>
 			<div class="col-sm-8">
-				<input type="text" class="form-control"
-					ng-model="params.populationSize">
+				<input type="number" class="form-control" name="quantity" min="1" ng-model="params.populationSize">
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-4 control-label">Iterations:</label>
 			<div class="col-sm-8">
-				<input type="text" class="form-control" ng-model="params.iterations">
+				<input type="number" class="form-control" name="quantity" min="1" ng-model="params.iterations">
 			</div>
 		</div>
 		<div class="form-group">

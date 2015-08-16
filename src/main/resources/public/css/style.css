@@ -10,6 +10,10 @@ body {
 	float: right;
 }
 
+.modal-dialog {
+    margin: 80px auto;
+}
+
 .toolbar {
 	padding-bottom: 10px;
 	overflow: auto;

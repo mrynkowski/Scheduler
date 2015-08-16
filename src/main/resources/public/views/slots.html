@@ -15,6 +15,9 @@
 					<h4 class="modal-title">New Slot</h4>
 				</div>
 				<div class="modal-body">
+						<div ng-show="slotAlert" id="formAlert" class="alert alert-warning fade in">						        	
+							<strong>Warning!</strong> Make sure all fields are filled and try again.
+						</div>
 					<form class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Subject</label>
@@ -52,7 +55,7 @@
 					<button type="button" class="btn btn-default btn-medium"
 						data-dismiss="modal">Close</button>
 					<button type="button" class="btn btn-primary btn-medium"
-						ng-click="createSlot(slot)" data-dismiss="modal">Save</button>
+						ng-click="createSlot(slot)">Save</button>
 				</div>
 			</div>
 		</div>

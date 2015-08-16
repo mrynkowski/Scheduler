@@ -83,28 +83,6 @@ public class SchedulesController {
 		return scheduleService.getSchedule(id);
 	}
 
-	public ArrayList<ArrayList<String>> prepareGrid(String name, List<Slot> slots, List<Resource> resources, int dAYS, int hOURS) {
-		
-		ArrayList<ArrayList<String>> grid = new ArrayList<ArrayList<String>>();
-			for (int i = 0; i < hOURS; i++) {
-				ArrayList<String> row = new ArrayList<String>();
-				for (int j = 0; j < dAYS; j++) {
-					row.add(new String());
-				}
-				grid.add(row);
-			}
-			List<Slot> data = getSlotsBy(name, slots);
-			for (Slot slot : data) {
-				if(slot.hour != null){
-					grid.get(slot.hour).set(
-							slot.day,
-							slot.subject + "\n" + slot.students + "\n"
-									+ slot.teacher + "\n" + slot.room);
-				}
-			}
-			return grid;
-	}
-
 	public List<Slot> getSlotsBy(String name, List<Slot> slots)  {
 		List<Slot> list = new ArrayList<Slot>();
 		for (Slot slot : slots) {
@@ -134,6 +112,27 @@ public class SchedulesController {
 		return prepareGrid(res.getName(), schedule.getSlots(), schedule.getResources(), schedule.getDays(), schedule.getHours());
 	}
 
+	public ArrayList<ArrayList<String>> prepareGrid(String name, List<Slot> slots, List<Resource> resources, int dAYS, int hOURS) {
+		ArrayList<ArrayList<String>> grid = new ArrayList<ArrayList<String>>();
+			for (int i = 0; i < hOURS; i++) {
+				ArrayList<String> row = new ArrayList<String>();
+				for (int j = 0; j < dAYS; j++) {
+					row.add(new String());
+				}
+				grid.add(row);
+			}
+			List<Slot> data = getSlotsBy(name, slots);
+			for (Slot slot : data) {
+				if(slot.hour != null){
+					grid.get(slot.hour).set(
+							slot.day,
+							slot.subject + "\n" + slot.students + "\n"
+									+ slot.teacher + "\n" + slot.room);
+				}
+			}
+			return grid;
+	}
+	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.POST)
 	public @ResponseBody void createSlot(@PathVariable Integer id, @RequestBody Slot data) {

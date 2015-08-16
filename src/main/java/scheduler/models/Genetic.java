@@ -82,7 +82,8 @@ public class Genetic {
 		boolean write = false;
 		while (!write) {
 			int day = (int) (Math.random() * s.days);
-			int hour = (int) (Math.random() * s.hours);
+			int hour = (int) (Math.random() * s.hours - slot.duration) ;
+			
 			Resource room = slot.rooms.get((int) (Math.random() * slot.rooms
 					.size()));
 			int i = 0;

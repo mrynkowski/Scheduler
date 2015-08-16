@@ -1,9 +1,8 @@
 <div class="main">
-	<div class="col-sm-4">
-		<p class="lead">Summary:</p>
-		<p class="lead">Name: {{name}}</p>
+	<div class="col-sm-3">
+		<p class="lead">User: {{name}}</p>
 	</div>
-	<div class="col-sm-8">
+	<div class="col-sm-9">
 		<div class="toolbar">
 			<label class="toolbar_text">Schedules:</label>
 			<input type="button" class="btn btn-success new btn-medium" value="New" data-toggle="modal" data-target="#scheduleModal"></input>
@@ -15,6 +14,9 @@
 								<h4 class="modal-title">New Schedule</h4>
 							</div>
 							<div class="modal-body">
+								<div ng-show="scheduleAlert" id="formAlert" class="alert alert-warning fade in">						        	
+							        <strong>Warning!</strong> Make sure all fields are filled and try again.
+						        </div>
 								<form class="form-horizontal">
 									<div class="form-group">
 										<label class="col-sm-2 control-label">Name</label>
@@ -26,7 +28,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-medium" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary btn-medium" ng-click="createSchedule(schedule)" data-dismiss="modal">Save</button>
+								<button type="button" class="btn btn-primary btn-medium" ng-click="createSchedule(schedule)">Save</button>
 							</div>
 						</div>
 					</div>

@@ -27,6 +27,9 @@ public class Slot implements Cloneable{
 	public Schedule schedule; 
 
 	@Column
+	public Integer number;
+	
+	@Column
 	public Integer day;
 
 	@Column
@@ -82,6 +85,14 @@ public class Slot implements Cloneable{
 		this.id = id;
 	}
 
+	public Integer getNumber() {
+		return number;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
+	
 	public Schedule getSchedule() {
 		return schedule;
 	}
