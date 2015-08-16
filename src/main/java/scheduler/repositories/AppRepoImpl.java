@@ -2,11 +2,14 @@ package scheduler.repositories;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import scheduler.models.Account;
 import scheduler.models.Resource;
 import scheduler.models.Schedule;
@@ -139,9 +142,10 @@ public class AppRepoImpl implements AppRepo{
 
 	@Transactional
 	@Override
-	public void deleteSlot(Integer id) {
-		Slot slot = em.find(Slot.class, id);
-		em.remove(slot);
+	public void deleteSlotsWithClassNumber(Integer classNumber) {
+		Query query = em.createQuery("DELETE FROM Slot s WHERE s.classNumber=?1");
+		query.setParameter(1, classNumber);
+		query.executeUpdate();
 	}
 
 	@Override
@@ -176,5 +180,17 @@ public class AppRepoImpl implements AppRepo{
 	public void deleteSubject(Integer subjectId) {
 		Subject subject = em.find(Subject.class, subjectId);	
 		em.remove(subject);
+	}
+
+	@Override
+	public void deleteSlot(Integer id) {
+		Slot slot = em.find(Slot.class, id);
+		em.remove(slot);
+	}
+
+	@Override
+	public Slot findSlot(Integer id) {
+		Slot slot = em.find(Slot.class, id);
+		return slot;
 	}
 }

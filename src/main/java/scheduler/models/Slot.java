@@ -27,7 +27,7 @@ public class Slot implements Cloneable{
 	public Schedule schedule; 
 
 	@Column
-	public Integer number;
+	public Integer classNumber;
 	
 	@Column
 	public Integer day;
@@ -85,14 +85,14 @@ public class Slot implements Cloneable{
 		this.id = id;
 	}
 
-	public Integer getNumber() {
-		return number;
+	public Integer getClassNumber() {
+		return classNumber;
 	}
 
-	public void setNumber(Integer number) {
-		this.number = number;
+	public void setClassNumber(Integer classNumber) {
+		this.classNumber = classNumber;
 	}
-	
+
 	public Schedule getSchedule() {
 		return schedule;
 	}
@@ -214,6 +214,7 @@ public class Slot implements Cloneable{
 		Slot clone = new Slot(day, hour, students, teacher, room, subject, duration);
 		List<Resource> rooms = new ArrayList<Resource>();
 		rooms.addAll(this.rooms);
+		clone.setClassNumber(this.getClassNumber());
 		clone.setRooms(rooms);
 		clone.setSchedule(this.schedule);
 		clone.setId(this.id);

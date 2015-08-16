@@ -82,7 +82,7 @@ public class Genetic {
 		boolean write = false;
 		while (!write) {
 			int day = (int) (Math.random() * s.days);
-			int hour = (int) (Math.random() * s.hours - slot.duration) ;
+			int hour = (int) (Math.random() * s.hours) ;
 			
 			Resource room = slot.rooms.get((int) (Math.random() * slot.rooms
 					.size()));
@@ -101,7 +101,8 @@ public class Genetic {
 				for (Slot sl : s.slots) {
 					if (sl.students.equals(slot.students)
 							&& sl.teacher.equals(slot.teacher)
-							&& sl.subject.equals(slot.subject)) {
+							&& sl.subject.equals(slot.subject)
+							&& sl.classNumber.equals(slot.classNumber)) {
 						sl.day = day;
 						sl.hour = hour + j;
 						sl.room = room.getName();
@@ -157,7 +158,8 @@ public class Genetic {
 		for (Slot slot : s.slots) {
 			if (slot.students.equals(removed.students)
 					&& slot.teacher.equals(removed.teacher)
-					&& slot.subject.equals(removed.subject)) {
+					&& slot.subject.equals(removed.subject)
+					&& slot.classNumber.equals(removed.classNumber)) {
 				slot.day = 99;
 				slot.hour = 99;
 				slot.room = null;

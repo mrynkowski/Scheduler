@@ -65,6 +65,7 @@ public class SchedulesController {
 		if(SecurityHelper.isUserLoggedIn(scheduleService, accountId)) {
 				Account account = scheduleService.findAccount(accountId);
 				schedule.setOwner(account);
+				schedule.setNumberOfClasses(0);
         		schedule.setDays(5);
         		schedule.setHours(5);
         		schedule.setIterations(100);
@@ -136,6 +137,13 @@ public class SchedulesController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.POST)
 	public @ResponseBody void createSlot(@PathVariable Integer id, @RequestBody Slot data) {
+		
+		Schedule schedule = scheduleService.getSchedule(id);
+		Integer numberOfClasses = schedule.getNumberOfClasses();
+		data.setClassNumber(numberOfClasses);
+		schedule.setNumberOfClasses(numberOfClasses + 1);
+		scheduleService.updateSchedule(schedule);
+		
 		scheduleService.createSlot(id, data);
 		for(int i = 0; i < data.duration-1; i++){
 			scheduleService.createSlotCopy(data.getId());
@@ -143,8 +151,10 @@ public class SchedulesController {
 	}
 	
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots/{slotId}", method = RequestMethod.DELETE)
-	public @ResponseBody void deleteSlot(@PathVariable Integer slotId) {
-		scheduleService.deleteSlot(slotId);
+	public @ResponseBody void deleteSlot(@PathVariable Integer slotId) {		
+		Slot slot = scheduleService.findSlot(slotId);
+		Integer classNumber = slot.getClassNumber();
+		scheduleService.deleteSlotsWithClassNumber(classNumber);
 	}
 	
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources/{resourceId}", method = RequestMethod.DELETE)
@@ -185,6 +195,7 @@ public class SchedulesController {
 	public @ResponseBody void generate(@PathVariable Long accountId, @PathVariable Integer id, @RequestBody Genetic params) throws CloneNotSupportedException {
 		Schedule schedule = scheduleService.getSchedule(id);
 		
+		int numberOfClasses = schedule.getNumberOfClasses();
 		Genetic genetic = new Genetic(schedule);
 		genetic.setDays(params.getDays());
 		genetic.setHours(params.getHours());
@@ -194,6 +205,7 @@ public class SchedulesController {
 		schedule = genetic.optimize();
 		
 		Account owner = scheduleService.findAccount(accountId);
+		schedule.setNumberOfClasses(numberOfClasses);
 		schedule.setOwner(owner);
 		schedule.setDays(params.getDays());
 		schedule.setHours(params.getHours());

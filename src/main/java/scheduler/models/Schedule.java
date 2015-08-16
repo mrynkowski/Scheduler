@@ -49,6 +49,9 @@ public class Schedule implements Cloneable{
 	@Column
 	Integer iterations;
 	
+	@Column
+	Integer numberOfClasses;
+	
 	@JsonIgnore
 	@ElementCollection
 	@CollectionTable(name="rates", joinColumns=@JoinColumn(name="schedule_id"))
@@ -191,10 +194,17 @@ public class Schedule implements Cloneable{
         this.owner = owner;
     }
 	
+	public Integer getNumberOfClasses() {
+		return numberOfClasses;
+	}
+
+	public void setNumberOfClasses(Integer numberOfClasses) {
+		this.numberOfClasses = numberOfClasses;
+	}
+
 	@Override
 	public String toString() {
 		return "Schedule [rate=" + rate + ", populationSize=" + populationSize
 				+ ", iterations=" + iterations + ", rates=" + rates + "]";
-	}
-	
+	}	
 }

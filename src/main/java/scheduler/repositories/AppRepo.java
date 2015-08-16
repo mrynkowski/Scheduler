@@ -17,6 +17,7 @@ public interface AppRepo {
 	List<Schedule> getSchedulesByAccountName(String name);
 	List<Schedule> getSchedulesByAccountId(Long id);
 	Object getResult(String query);
+	Slot findSlot(Integer id);
 	void createSchedule(Schedule schedule);
 	void createSchedule(Long id, Schedule schedule);
 	void createSlot(Integer id, Slot slot);
@@ -29,4 +30,5 @@ public interface AppRepo {
 	void deleteResource(Integer id);
 	void createSubject(Integer id, Subject data);
 	void deleteSubject(Integer subjectId);
+	void deleteSlotsWithClassNumber(Integer classNumber);
 }
