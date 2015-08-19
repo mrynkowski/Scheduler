@@ -43,16 +43,19 @@ public class GeneticTest {
 		resources.add(new Resource("100", "room"));
 		s.setResources(resources);
 		List<Slot> slots = new ArrayList<Slot>();
+		/*
 		slots.add(new Slot(0, 1, "A", "Chang", "100", "Chinese", 2));
 		slots.add(new Slot(0, 2, "A", "Chang", "100", "Chinese", 2));
 		slots.add(new Slot(1, 3, "A", "Chang", "100", "Chinese", 2));
 		slots.add(new Slot(1, 4, "A", "Chang", "100", "Chinese", 2));
 		slots.add(new Slot(1, 5, "A", "Chang", "100", "Chinese", 2));
 		slots.add(new Slot(1, 6, "A", "Chang", "100", "Chinese", 2));
+		*/
 		s.setSlots(slots);
 		Assert.assertEquals(1, g.rateSchedule(s), 0.1);
 	}
 	
+	/*
 	@Test
 	public void testRateGivenDayWith2SlotsNoFrees(){
 		List<Slot> slots = new ArrayList<Slot>();
@@ -70,4 +73,5 @@ public class GeneticTest {
 		slots.add(new Slot(2, 3, "A", "Chang", "100", "Chinese", 2));
 		Assert.assertEquals(0, g.rateDay(slots), 0.1);
 	}
+	*/
 }

@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +28,7 @@ public class Subject {
 	@ManyToOne(targetEntity=Schedule.class)    
 	@JoinColumn(name="schedule_id")
 	public Schedule schedule; 
-	
+		
 	public Schedule getSchedule() {
 		return schedule;
 	}
@@ -38,11 +40,12 @@ public class Subject {
 	public Subject() {
 		super();
 	}
-
-	public Subject(String name) {
+	
+	public Subject(String id) {
 		super();
-		this.name = name;
+		this.id = Integer.parseInt(id);
 	}
+
 
 	public Integer getId() {
 		return id;

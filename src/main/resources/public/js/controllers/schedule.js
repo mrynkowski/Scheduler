@@ -8,6 +8,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.resourceAlert = false;
 	$scope.slotAlert = false;
 	$scope.subjectAlert = false;
+	$scope.newgrid = [["", "", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""]];
 	
 	$http.get('/rest/account/' + $rootScope.name).success(function(data) {
 		$rootScope.accountId = data.id;
@@ -103,6 +104,8 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	
 	$scope.createSlot = function(slot) {
 		if (slot != undefined && slot.subject != undefined && slot.students != undefined && slot.teacher != undefined && slot.duration != undefined) {
+				
+			var slotToSave = slot;
 				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/slots', slot).success(function() {
 					$scope.fetchSlots();
 					$scope.slotAlert = false;

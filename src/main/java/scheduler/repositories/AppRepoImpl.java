@@ -125,9 +125,9 @@ public class AppRepoImpl implements AppRepo{
 
 	@Transactional
 	@Override
-	public void createSlotCopy(Integer id) {
-		Slot clone = em.find(Slot.class, id);
-		em.detach(clone);
+	public void createSlotCopy(Integer id) throws CloneNotSupportedException {
+		Slot slot = em.find(Slot.class, id);		
+		Slot clone = (Slot) slot.clone();
 		clone.setId(null);
 		em.persist(clone);
 	}
@@ -192,5 +192,11 @@ public class AppRepoImpl implements AppRepo{
 	public Slot findSlot(Integer id) {
 		Slot slot = em.find(Slot.class, id);
 		return slot;
+	}
+
+	@Override
+	public Subject findSubject(Integer id) {
+		Subject subject = em.find(Subject.class, id);
+		return subject;
 	}
 }

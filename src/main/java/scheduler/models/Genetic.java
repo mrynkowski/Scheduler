@@ -77,42 +77,61 @@ public class Genetic {
 			setDayAndHour(slot, schedule);
 		}
 	}
-
+	
 	public void setDayAndHour(Slot slot, Schedule s) {
+		
+		ArrayList<ArrayList<Boolean>> grid = new ArrayList<ArrayList<Boolean>>();
+				
 		boolean write = false;
 		while (!write) {
 			int day = (int) (Math.random() * s.days);
 			int hour = (int) (Math.random() * s.hours) ;
 			
-			Resource room = slot.rooms.get((int) (Math.random() * slot.rooms
-					.size()));
-			int i = 0;
-			boolean good = true;
-			while (i < s.slots.size() && good) {
-				for (int h = 0; h < slot.duration; h++) {
-					good = good && isFree(day, hour + h, slot, room, s);
-					good = good && (hour + slot.duration <= s.hours);
+				Resource room = slot.rooms.get((int) (Math.random() * slot.rooms.size()));
+				int i = 0;
+				boolean good = true;
+				while (i < s.slots.size() && good) {
+					for (int h = 0; h < slot.duration; h++) {
+						good = good && isFree(day, hour + h, slot, room, s);
+						good = good && (hour + slot.duration <= s.hours);
+					}
+					i++;
 				}
-				i++;
-			}
-			if (good == true) {
-				write = true;
-				int j = 0;
-				for (Slot sl : s.slots) {
-					if (sl.students.equals(slot.students)
-							&& sl.teacher.equals(slot.teacher)
-							&& sl.subject.equals(slot.subject)
-							&& sl.classNumber.equals(slot.classNumber)) {
-						sl.day = day;
-						sl.hour = hour + j;
-						sl.room = room.getName();
-						j++;
+				
+				if (good == true) {
+					write = true;
+					int j = 0;
+					for (Slot sl : s.slots) {
+						if (sl.students.getName().equals(slot.students.getName()) && sl.teacher.getName().equals(slot.teacher.getName()) && sl.subject.getName().equals(slot.subject.getName())
+								&& sl.classNumber.equals(slot.classNumber)) {
+							sl.day = day;
+							sl.hour = hour + j;
+							sl.room = room;
+							j++;
+						}
 					}
 				}
-			}
 		}
 	}
 
+	public void mutation() throws CloneNotSupportedException {
+		Schedule s = population.get((int) (Math.random() * population.size()));
+		Slot removed = (Slot) s.slots
+				.get((int) (Math.random() * s.slots.size()));
+
+		for (Slot slot : s.slots) {
+			if (slot.students.equals(removed.students)
+					&& slot.teacher.equals(removed.teacher)
+					&& slot.subject.equals(removed.subject)
+					&& slot.classNumber.equals(removed.classNumber)) {
+				slot.day = 99;
+				slot.hour = 99;
+				slot.room = null;
+			}
+		}
+		setDayAndHour(removed, s);
+	}
+	
 	public Schedule optimize() throws CloneNotSupportedException {
 		init();
 
@@ -150,24 +169,6 @@ public class Genetic {
 		});
 	}
 
-	public void mutation() throws CloneNotSupportedException {
-		Schedule s = population.get((int) (Math.random() * population.size()));
-		Slot removed = (Slot) s.slots
-				.get((int) (Math.random() * s.slots.size()));
-
-		for (Slot slot : s.slots) {
-			if (slot.students.equals(removed.students)
-					&& slot.teacher.equals(removed.teacher)
-					&& slot.subject.equals(removed.subject)
-					&& slot.classNumber.equals(removed.classNumber)) {
-				slot.day = 99;
-				slot.hour = 99;
-				slot.room = null;
-			}
-		}
-		setDayAndHour(removed, s);
-	}
-
 	public void sort(List<Slot> slots) {
 		Collections.sort(slots, new Comparator<Slot>() {
 			@Override
@@ -176,9 +177,11 @@ public class Genetic {
 				c = o1.day.compareTo(o2.day);
 				if (c == 0) {
 					c = o1.hour.compareTo(o2.hour);
+					/*
 					if (c == 0) {
 						c = o1.students.compareTo(o2.students);
 					}
+					*/
 				}
 				return c;
 			}
@@ -189,9 +192,7 @@ public class Genetic {
 			Schedule s) {
 		for (Slot slot : s.slots) {
 			if (slot.day == day && slot.hour == hour) {
-				if (slot.students.equals(match.students)
-						|| slot.teacher.equals(match.teacher)
-						|| slot.room.equals(room.getName())) {
+				if (slot.students.equals(match.students) || slot.teacher.equals(match.teacher) || slot.room.equals(room.getName())) {
 					return false;
 				}
 			}
@@ -209,7 +210,7 @@ public class Genetic {
 					List<Slot> day = new ArrayList<Slot>();
 					
 					for (Slot slot : schedule.slots) {
-						if (slot.day == i && (slot.students.equals(res.getName()) || slot.teacher.equals(res.getName()))) {
+						if (slot.day == i && (slot.students.equals(res) || slot.teacher.equals(res))) {
 							day.add(slot);
 						}
 					}

@@ -1,10 +1,16 @@
 package scheduler.models;
 
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,9 +29,18 @@ public class Resource implements Cloneable{
 	@JsonIgnore
 	@ManyToOne(targetEntity = Schedule.class)
 	public Schedule schedule;
+		
+	@JsonIgnore
+    @OneToMany(mappedBy="row")
+    private List<Row> rows;
 	
 	public Resource() {
 		super();
+	}
+
+	public Resource(String id) {
+		super();
+		this.id = Integer.parseInt(id);
 	}
 
 	public Resource(String name, String type) {
@@ -41,6 +56,25 @@ public class Resource implements Cloneable{
 		this.type = type;
 	}
 	
+	public Resource(Integer id, String name, String type, Schedule schedule) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.schedule = schedule;
+	}
+	
+
+
+
+	public List<Row> getRows() {
+		return rows;
+	}
+
+	public void setRows(List<Row> rows) {
+		this.rows = rows;
+	}
+
 	public Schedule getSchedule() {
 		return schedule;
 	}

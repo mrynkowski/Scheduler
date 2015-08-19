@@ -18,10 +18,11 @@ public interface AppRepo {
 	List<Schedule> getSchedulesByAccountId(Long id);
 	Object getResult(String query);
 	Slot findSlot(Integer id);
+	Subject findSubject(Integer id);
 	void createSchedule(Schedule schedule);
 	void createSchedule(Long id, Schedule schedule);
 	void createSlot(Integer id, Slot slot);
-	void createSlotCopy(Integer id);
+	void createSlotCopy(Integer id) throws CloneNotSupportedException;
 	void createResource(Integer id, Resource resource);
 	Resource getResource(Integer id);
 	List<Resource> getResourcesByType(Integer id, String type);

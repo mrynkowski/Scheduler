@@ -23,7 +23,7 @@
 							<label class="col-sm-2 control-label">Subject</label>
 							<div class="col-sm-10">
 								<select class="form-control" ng-model="slot.subject">
-									<option ng-repeat="subject in subjects">{{subject.name}}</option>
+									<option ng-repeat="subject in subjects" value="{{subject.id}}">{{subject.name}}</option>
 								</select>
 							</div>
 						</div>
@@ -31,7 +31,7 @@
 							<label class="col-sm-2 control-label">Students</label>
 							<div class="col-sm-10">
 								<select class="form-control" ng-model="slot.students">
-									<option ng-repeat="students in groups">{{students.name}}</option>
+									<option ng-repeat="students in groups" value="{{students.id}}">{{students.name}}</option>
 								</select>
 							</div>
 						</div>
@@ -39,7 +39,7 @@
 							<label class="col-sm-2 control-label">Teacher</label>
 							<div class="col-sm-10">
 								<select class="form-control" ng-model="slot.teacher">
-									<option ng-repeat="teacher in teachers">{{teacher.name}}</option>
+									<option ng-repeat="teacher in teachers"value="{{teacher.id}}">{{teacher.name}}</option>
 								</select>
 							</div>
 						</div>
@@ -86,10 +86,10 @@
 			<tr ng-repeat="slot in slots">
 				<td>{{slot.day}}</td>
 				<td>{{slot.hour}}</td>
-				<td>{{slot.room}}</td>
-				<td>{{slot.subject}}</td>
-				<td>{{slot.students}}</td>
-				<td>{{slot.teacher}}</td>
+				<td>{{slot.room.name}}</td>
+				<td>{{slot.subject.name}}</td>
+				<td>{{slot.students.name}}</td>
+				<td>{{slot.teacher.name}}</td>
 				<td>{{slot.duration}}</td>
 				<td style="width: 77px; height: 39px"><input
 					ng-show="deleteSlotButtons"

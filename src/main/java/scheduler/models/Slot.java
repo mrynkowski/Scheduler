@@ -2,6 +2,8 @@ package scheduler.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -35,17 +39,21 @@ public class Slot implements Cloneable{
 	@Column
 	public Integer hour;
 
-	@Column
-	public String students;
+	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
+	@JoinColumn(name="students_id")
+	public Resource students;
 
-	@Column
-	public String teacher;
+	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
+	@JoinColumn(name="teacher_id")
+	public Resource teacher;
 
-	@Column
-	public String subject;
+	@OneToOne (targetEntity=Subject.class, cascade=CascadeType.ALL)
+	@JoinColumn(name="subject_id")
+	public Subject subject;
 
-	@Column
-	public String room;
+	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
+	@JoinColumn(name="room_id")
+	public Resource room;
 
 	@Column
 	public Integer duration;
@@ -56,17 +64,9 @@ public class Slot implements Cloneable{
 	public Slot(){
 
 	}
-
-	public Slot(String students, String teacher, List<Resource> rooms, String subject, Integer duration) {
-		super();
-		this.students = students;
-		this.teacher = teacher;
-		this.subject = subject;
-		this.rooms = rooms;
-		this.duration = duration;
-	}
-
-	public Slot(Integer day, Integer hour, String students, String teacher, String room, String subject, Integer duration) {
+	
+	public Slot(Integer day, Integer hour, Resource students, Resource teacher,
+			Subject subject, Resource room, Integer duration) {
 		super();
 		this.day = day;
 		this.hour = hour;
@@ -117,35 +117,35 @@ public class Slot implements Cloneable{
 		this.hour = hour;
 	}
 
-	public String getStudents() {
+	public Resource getStudents() {
 		return students;
 	}
 
-	public void setStudents(String students) {
+	public void setStudents(Resource students) {
 		this.students = students;
 	}
 
-	public String getTeacher() {
+	public Resource getTeacher() {
 		return teacher;
 	}
 
-	public void setTeacher(String teacher) {
+	public void setTeacher(Resource teacher) {
 		this.teacher = teacher;
 	}
 
-	public String getSubject() {
+	public Subject getSubject() {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(Subject subject) {
 		this.subject = subject;
 	}
 
-	public String getRoom() {
+	public Resource getRoom() {
 		return room;
 	}
 
-	public void setRoom(String room) {
+	public void setRoom(Resource room) {
 		this.room = room;
 	}
 
@@ -211,9 +211,12 @@ public class Slot implements Cloneable{
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		Slot clone = new Slot(day, hour, students, teacher, room, subject, duration);
+		Slot clone = new Slot(day, hour, students, teacher, subject, room, duration);
+						
 		List<Resource> rooms = new ArrayList<Resource>();
-		rooms.addAll(this.rooms);
+		if (this.rooms != null) {
+			rooms.addAll(this.rooms);
+		}
 		clone.setClassNumber(this.getClassNumber());
 		clone.setRooms(rooms);
 		clone.setSchedule(this.schedule);

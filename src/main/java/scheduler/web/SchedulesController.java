@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import scheduler.models.Account;
 import scheduler.models.Genetic;
 import scheduler.models.Resource;
+import scheduler.models.Row;
 import scheduler.models.Schedule;
 import scheduler.models.Slot;
 import scheduler.models.Subject;
@@ -84,7 +85,7 @@ public class SchedulesController {
 		return scheduleService.getSchedule(id);
 	}
 
-	public List<Slot> getSlotsBy(String name, List<Slot> slots)  {
+	public List<Slot> getSlotsBy(Resource name, List<Slot> slots)  {
 		List<Slot> list = new ArrayList<Slot>();
 		for (Slot slot : slots) {
 			if (slot.students.equals(name) || slot.teacher.equals(name) || name.equals(slot.room)) {
@@ -110,10 +111,10 @@ public class SchedulesController {
 	public @ResponseBody ArrayList<ArrayList<String>> grids(@PathVariable Integer resid, @PathVariable Integer id) {
 		Schedule schedule = scheduleService.getSchedule(id);
 		Resource res = scheduleService.getResource(resid);
-		return prepareGrid(res.getName(), schedule.getSlots(), schedule.getResources(), schedule.getDays(), schedule.getHours());
+		return prepareGrid(res, schedule.getSlots(), schedule.getResources(), schedule.getDays(), schedule.getHours());
 	}
 
-	public ArrayList<ArrayList<String>> prepareGrid(String name, List<Slot> slots, List<Resource> resources, int dAYS, int hOURS) {
+	public ArrayList<ArrayList<String>> prepareGrid(Resource name, List<Slot> slots, List<Resource> resources, int dAYS, int hOURS) {
 		ArrayList<ArrayList<String>> grid = new ArrayList<ArrayList<String>>();
 			for (int i = 0; i < hOURS; i++) {
 				ArrayList<String> row = new ArrayList<String>();
@@ -127,8 +128,8 @@ public class SchedulesController {
 				if(slot.hour != null){
 					grid.get(slot.hour).set(
 							slot.day,
-							slot.subject + "\n" + slot.students + "\n"
-									+ slot.teacher + "\n" + slot.room);
+							slot.subject.getName() + "\n" + slot.students.getName() + "\n"
+									+ slot.teacher.getName() + "\n" + slot.room.getName());
 				}
 			}
 			return grid;
@@ -136,13 +137,21 @@ public class SchedulesController {
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.POST)
-	public @ResponseBody void createSlot(@PathVariable Integer id, @RequestBody Slot data) {
+	public @ResponseBody void createSlot(@PathVariable Integer id, @RequestBody Slot data) throws CloneNotSupportedException {
+						
+		Resource students = scheduleService.getResource(data.getStudents().getId());
+		Resource teacher =  scheduleService.getResource(data.getTeacher().getId());
+		Subject subject =  scheduleService.findSubject(data.getSubject().getId());
 		
 		Schedule schedule = scheduleService.getSchedule(id);
 		Integer numberOfClasses = schedule.getNumberOfClasses();
 		data.setClassNumber(numberOfClasses);
 		schedule.setNumberOfClasses(numberOfClasses + 1);
 		scheduleService.updateSchedule(schedule);
+		
+		data.setStudents(students);
+		data.setTeacher(teacher);
+		data.setSubject(subject);
 		
 		scheduleService.createSlot(id, data);
 		for(int i = 0; i < data.duration-1; i++){
@@ -170,6 +179,20 @@ public class SchedulesController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources", method = RequestMethod.POST)
 	public @ResponseBody void createResource(@PathVariable Integer id, @RequestBody Resource data) {
+		
+		List<Row> grid = new ArrayList<Row>();
+		for (int i = 0; i < 5; i++) {
+			Row rowClass = new Row();
+			ArrayList<Boolean> row = new ArrayList<Boolean>();
+			for (int j = 0; j < 5; j++) {
+				row.add(true);
+			}
+			rowClass.setResource(data);
+			rowClass.setRow(row);
+			grid.add(rowClass);
+		}
+		
+		data.setRows(grid);
 		scheduleService.createResource(id, data);
 	}
 	
