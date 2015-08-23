@@ -57,6 +57,17 @@ public class Slot implements Cloneable{
 
 	@Column
 	public Integer duration;
+	
+	@Column
+	public Boolean isFixed;
+
+	public Boolean getIsFixed() {
+		return isFixed;
+	}
+
+	public void setIsFixed(Boolean isFixed) {
+		this.isFixed = isFixed;
+	}
 
 	@Transient
 	public List<Resource> rooms;
@@ -75,6 +86,24 @@ public class Slot implements Cloneable{
 		this.subject = subject;
 		this.room = room;
 		this.duration = duration;
+	}
+
+	public Slot(Schedule schedule, Integer classNumber,
+			Integer day, Integer hour, Resource students, Resource teacher,
+			Subject subject, Resource room, Integer duration, Boolean isFixed,
+			List<Resource> rooms) {
+		super();
+		this.schedule = schedule;
+		this.classNumber = classNumber;
+		this.day = day;
+		this.hour = hour;
+		this.students = students;
+		this.teacher = teacher;
+		this.subject = subject;
+		this.room = room;
+		this.duration = duration;
+		this.isFixed = isFixed;
+		this.rooms = rooms;
 	}
 
 	public Integer getId() {
@@ -217,6 +246,7 @@ public class Slot implements Cloneable{
 		if (this.rooms != null) {
 			rooms.addAll(this.rooms);
 		}
+		clone.setIsFixed(this.getIsFixed());
 		clone.setClassNumber(this.getClassNumber());
 		clone.setRooms(rooms);
 		clone.setSchedule(this.schedule);
@@ -226,8 +256,28 @@ public class Slot implements Cloneable{
 
 	@Override
 	public String toString() {
-		return "Slot [day=" + day + ", hour=" + hour + ", students=" + students
-				+ ", teacher=" + teacher + ", subject=" + subject + ", room="
-				+ room + "]";
+		String subjectName = "";
+		String studentsName = "";
+		String teacherName = "";
+		String roomName = "";
+		
+		if (this.subject != null) {
+			subjectName = this.subject.getName();
+		}
+		
+		if (this.students != null) {
+			studentsName = this.students.getName();
+		}
+		
+		if (this.teacher != null) {
+			teacherName = this.teacher.getName();
+		}
+		
+		if (this.room != null) {
+			roomName = this.room.getName();
+		}
+		
+		return subjectName + "\n" + studentsName + "\n"
+				+ teacherName + "\n" + roomName;
 	}	
 }

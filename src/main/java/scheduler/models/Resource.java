@@ -29,11 +29,7 @@ public class Resource implements Cloneable{
 	@JsonIgnore
 	@ManyToOne(targetEntity = Schedule.class)
 	public Schedule schedule;
-		
-	@JsonIgnore
-    @OneToMany(mappedBy="row")
-    private List<Row> rows;
-	
+			
 	public Resource() {
 		super();
 	}
@@ -62,17 +58,6 @@ public class Resource implements Cloneable{
 		this.name = name;
 		this.type = type;
 		this.schedule = schedule;
-	}
-	
-
-
-
-	public List<Row> getRows() {
-		return rows;
-	}
-
-	public void setRows(List<Row> rows) {
-		this.rows = rows;
 	}
 
 	public Schedule getSchedule() {

@@ -134,6 +134,16 @@ public class AppRepoImpl implements AppRepo{
 
 	@Transactional
 	@Override
+	public void createSlotCopy(Integer id, int i) throws CloneNotSupportedException {
+		Slot slot = em.find(Slot.class, id);		
+		Slot clone = (Slot) slot.clone();
+		clone.setId(null);
+		clone.setHour(clone.getHour()+i);
+		em.persist(clone);
+	}
+	
+	@Transactional
+	@Override
 	public void createResource(Integer id, Resource resource) {
 		Schedule schedule = em.getReference(Schedule.class, id);
 		resource.setSchedule(schedule);

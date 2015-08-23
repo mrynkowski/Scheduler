@@ -103,8 +103,11 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	};
 	
 	$scope.createSlot = function(slot) {
-		if (slot != undefined && slot.subject != undefined && slot.students != undefined && slot.teacher != undefined && slot.duration != undefined) {
-				
+		if (slot != undefined && slot.duration != undefined && (slot.students != undefined || slot.teacher != undefined)) {
+			
+			if (slot.isFixed == undefined) {
+				slot.isFixed = false;
+			}
 			var slotToSave = slot;
 				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/slots', slot).success(function() {
 					$scope.fetchSlots();

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import scheduler.models.Account;
 import scheduler.models.Genetic;
 import scheduler.models.Resource;
-import scheduler.models.Row;
 import scheduler.models.Schedule;
 import scheduler.models.Slot;
 import scheduler.models.Subject;
@@ -88,7 +87,7 @@ public class SchedulesController {
 	public List<Slot> getSlotsBy(Resource name, List<Slot> slots)  {
 		List<Slot> list = new ArrayList<Slot>();
 		for (Slot slot : slots) {
-			if (slot.students.equals(name) || slot.teacher.equals(name) || name.equals(slot.room)) {
+			if (name.equals(slot.students) || name.equals(slot.teacher) || name.equals(slot.room)) {
 				list.add(slot);
 			}
 		}
@@ -126,10 +125,7 @@ public class SchedulesController {
 			List<Slot> data = getSlotsBy(name, slots);
 			for (Slot slot : data) {
 				if(slot.hour != null){
-					grid.get(slot.hour).set(
-							slot.day,
-							slot.subject.getName() + "\n" + slot.students.getName() + "\n"
-									+ slot.teacher.getName() + "\n" + slot.room.getName());
+					grid.get(slot.hour).set(slot.day, slot.toString());
 				}
 			}
 			return grid;
@@ -138,10 +134,22 @@ public class SchedulesController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.POST)
 	public @ResponseBody void createSlot(@PathVariable Integer id, @RequestBody Slot data) throws CloneNotSupportedException {
-						
-		Resource students = scheduleService.getResource(data.getStudents().getId());
-		Resource teacher =  scheduleService.getResource(data.getTeacher().getId());
-		Subject subject =  scheduleService.findSubject(data.getSubject().getId());
+			
+		Resource students = null;
+		Resource teacher = null;
+		Subject subject = null;
+		
+		if (data.getStudents() != null) {
+			students = scheduleService.getResource(data.getStudents().getId());
+		}
+		
+		if (data.getTeacher() != null) {
+			teacher =  scheduleService.getResource(data.getTeacher().getId());
+		}
+		
+		if (data.getSubject() != null) {
+			subject =  scheduleService.findSubject(data.getSubject().getId());
+		}
 		
 		Schedule schedule = scheduleService.getSchedule(id);
 		Integer numberOfClasses = schedule.getNumberOfClasses();
@@ -154,8 +162,12 @@ public class SchedulesController {
 		data.setSubject(subject);
 		
 		scheduleService.createSlot(id, data);
-		for(int i = 0; i < data.duration-1; i++){
-			scheduleService.createSlotCopy(data.getId());
+		for(int i = 1; i < data.duration; i++){
+			if (data.isFixed) {
+				scheduleService.createSlotCopy(data.getId(), i);
+			} else {
+				scheduleService.createSlotCopy(data.getId());
+			}
 		}
 	}
 	
@@ -179,20 +191,6 @@ public class SchedulesController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/resources", method = RequestMethod.POST)
 	public @ResponseBody void createResource(@PathVariable Integer id, @RequestBody Resource data) {
-		
-		List<Row> grid = new ArrayList<Row>();
-		for (int i = 0; i < 5; i++) {
-			Row rowClass = new Row();
-			ArrayList<Boolean> row = new ArrayList<Boolean>();
-			for (int j = 0; j < 5; j++) {
-				row.add(true);
-			}
-			rowClass.setResource(data);
-			rowClass.setRow(row);
-			grid.add(rowClass);
-		}
-		
-		data.setRows(grid);
 		scheduleService.createResource(id, data);
 	}
 	

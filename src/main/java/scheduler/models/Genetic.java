@@ -59,22 +59,26 @@ public class Genetic {
 
 	public void init() {
 		for (Slot slot : schedule.slots) {
-			slot.day = Integer.MAX_VALUE;
-			slot.hour = Integer.MAX_VALUE;
+			if (!slot.isFixed) {
+				slot.day = Integer.MAX_VALUE;
+				slot.hour = Integer.MAX_VALUE;
 
-			List<Resource> list = schedule.getResources();
-			List<Resource> output = new ArrayList<Resource>();
-			for (Resource res : list) {
-				if (res.getType().equals("room")) {
-					output.add(res);
+				List<Resource> list = schedule.getResources();
+				List<Resource> output = new ArrayList<Resource>();
+				for (Resource res : list) {
+					if (res.getType().equals("room")) {
+						output.add(res);
+					}
 				}
-			}
 
-			slot.setRooms(output);
-			slot.room = null;
+				slot.setRooms(output);
+				slot.room = null;
+			}
 		}
 		for (Slot slot : schedule.slots) {
-			setDayAndHour(slot, schedule);
+			if (!slot.isFixed) {
+				setDayAndHour(slot, schedule);	
+			}
 		}
 	}
 	
@@ -102,8 +106,8 @@ public class Genetic {
 					write = true;
 					int j = 0;
 					for (Slot sl : s.slots) {
-						if (sl.students.getName().equals(slot.students.getName()) && sl.teacher.getName().equals(slot.teacher.getName()) && sl.subject.getName().equals(slot.subject.getName())
-								&& sl.classNumber.equals(slot.classNumber)) {
+						if (slot.students.equals(sl.students)  && slot.teacher.equals(sl.teacher) && slot.subject.equals(sl.subject)
+								&& slot.classNumber.equals(sl.classNumber)) {
 							sl.day = day;
 							sl.hour = hour + j;
 							sl.room = room;
@@ -120,16 +124,21 @@ public class Genetic {
 				.get((int) (Math.random() * s.slots.size()));
 
 		for (Slot slot : s.slots) {
-			if (slot.students.equals(removed.students)
-					&& slot.teacher.equals(removed.teacher)
-					&& slot.subject.equals(removed.subject)
-					&& slot.classNumber.equals(removed.classNumber)) {
-				slot.day = 99;
-				slot.hour = 99;
-				slot.room = null;
+			if (!slot.isFixed) {
+				if (slot.students.equals(removed.students)
+						&& slot.teacher.equals(removed.teacher)
+						&& slot.subject.equals(removed.subject)
+						&& slot.classNumber.equals(removed.classNumber)) {
+					slot.day = 99;
+					slot.hour = 99;
+					slot.room = null;
+				}
 			}
+
 		}
-		setDayAndHour(removed, s);
+		if (!removed.isFixed) {
+			setDayAndHour(removed, s);
+		}
 	}
 	
 	public Schedule optimize() throws CloneNotSupportedException {
@@ -192,7 +201,7 @@ public class Genetic {
 			Schedule s) {
 		for (Slot slot : s.slots) {
 			if (slot.day == day && slot.hour == hour) {
-				if (slot.students.equals(match.students) || slot.teacher.equals(match.teacher) || slot.room.equals(room.getName())) {
+				if (match.students.equals(slot.students) || match.teacher.equals(slot.teacher) || room.equals(slot.room)) {
 					return false;
 				}
 			}
@@ -210,7 +219,7 @@ public class Genetic {
 					List<Slot> day = new ArrayList<Slot>();
 					
 					for (Slot slot : schedule.slots) {
-						if (slot.day == i && (slot.students.equals(res) || slot.teacher.equals(res))) {
+						if (slot.day == i && (res.equals(slot.students) || res.equals(slot.teacher))) {
 							day.add(slot);
 						}
 					}

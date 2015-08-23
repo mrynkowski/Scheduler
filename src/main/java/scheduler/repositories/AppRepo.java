@@ -32,4 +32,5 @@ public interface AppRepo {
 	void createSubject(Integer id, Subject data);
 	void deleteSubject(Integer subjectId);
 	void deleteSlotsWithClassNumber(Integer classNumber);
+	void createSlotCopy(Integer id, int i) throws CloneNotSupportedException;
 }
