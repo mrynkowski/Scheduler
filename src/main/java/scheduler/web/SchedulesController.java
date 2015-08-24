@@ -70,6 +70,12 @@ public class SchedulesController {
         		schedule.setHours(5);
         		schedule.setIterations(100);
         		schedule.setPopulationSize(10);
+        		schedule.setHoursA(2.0);
+        		schedule.setHoursB(4.0);
+        		schedule.setHoursC(6.0);
+        		schedule.setHoursD(8.0);
+        		schedule.setFreeA(0.5);
+        		schedule.setFreeB(0.0);
         		scheduleService.createSchedule(schedule);
 		}
 	}
@@ -218,6 +224,13 @@ public class SchedulesController {
 		
 		int numberOfClasses = schedule.getNumberOfClasses();
 		Genetic genetic = new Genetic(schedule);
+		genetic.setHoursA(params.hoursA);
+		genetic.setHoursB(params.hoursB);
+		genetic.setHoursC(params.hoursC);
+		genetic.setHoursD(params.hoursD);
+		genetic.setFreeA(params.freeA);
+		genetic.setFreeB(params.freeB);
+		
 		genetic.setDays(params.getDays());
 		genetic.setHours(params.getHours());
 		genetic.setiterations(params.getIterations());
@@ -226,6 +239,12 @@ public class SchedulesController {
 		schedule = genetic.optimize();
 		
 		Account owner = scheduleService.findAccount(accountId);
+		schedule.setHoursA(params.hoursA);
+		schedule.setHoursB(params.hoursB);
+		schedule.setHoursC(params.hoursC);
+		schedule.setHoursD(params.hoursD);
+		schedule.setFreeA(params.freeA);
+		schedule.setFreeB(params.freeB);
 		schedule.setNumberOfClasses(numberOfClasses);
 		schedule.setOwner(owner);
 		schedule.setDays(params.getDays());

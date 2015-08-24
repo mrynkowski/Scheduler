@@ -34,6 +34,7 @@
 					</div>
 				</div>
 		</div>
+		<div class="alert alert-info" ng-show="schedules.length == 0">No schedules found</div>
 		<div class="list-group">
 			<a ng-repeat="schedule in schedules" class="list-group-item"
 				href="/user/{{name}}/{{schedule.id}}" ng-click="setSchedule(schedule)">

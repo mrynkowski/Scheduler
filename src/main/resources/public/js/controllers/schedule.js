@@ -8,7 +8,14 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.resourceAlert = false;
 	$scope.slotAlert = false;
 	$scope.subjectAlert = false;
-	$scope.newgrid = [["", "", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""],["", "", "", ""]];
+
+	
+	$scope.setDayAndHour = function() {
+		$scope.slot.hour = 0;
+		$scope.slot.day = 0;
+		$scope.maxDay = $scope.params.days-1;
+		$scope.maxHour = $scope.params.hours;
+	};
 	
 	$http.get('/rest/account/' + $rootScope.name).success(function(data) {
 		$rootScope.accountId = data.id;
@@ -95,6 +102,15 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			$scope.schedule = data;
 			$scope.params.days = data.days;
 			$scope.params.hours = data.hours;
+			
+			$scope.params.hoursA = data.hoursA;
+			$scope.params.hoursB = data.hoursB;
+			$scope.params.hoursC = data.hoursC;
+			$scope.params.hoursD = data.hoursD;
+			
+			$scope.params.freeA = data.freeA;
+			$scope.params.freeB = data.freeB;
+			
 			$scope.params.populationSize = data.populationSize;
 			$scope.params.iterations = data.iterations;
 			$scope.chart();
@@ -113,6 +129,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 					$scope.fetchSlots();
 					$scope.slotAlert = false;
 					$('#slotModal').modal('hide');
+					$scope.slot = {}
 				});
 		} else {
 			$scope.slotAlert = true;

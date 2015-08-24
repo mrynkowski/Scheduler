@@ -52,6 +52,24 @@ public class Schedule implements Cloneable{
 	@Column
 	Integer numberOfClasses;
 	
+	@Column
+	Double hoursA;
+	
+	@Column
+	Double hoursB;
+	
+	@Column
+	Double hoursC;
+	
+	@Column
+	Double hoursD;
+	
+	@Column
+	Double freeA;
+	
+	@Column
+	Double freeB;
+	
 	@JsonIgnore
 	@ElementCollection
 	@CollectionTable(name="rates", joinColumns=@JoinColumn(name="schedule_id"))
@@ -78,6 +96,54 @@ public class Schedule implements Cloneable{
 
 	public String getName() {
 		return name;
+	}
+
+	public Double getHoursA() {
+		return hoursA;
+	}
+
+	public void setHoursA(Double hoursA) {
+		this.hoursA = hoursA;
+	}
+
+	public Double getHoursB() {
+		return hoursB;
+	}
+
+	public void setHoursB(Double hoursB) {
+		this.hoursB = hoursB;
+	}
+
+	public Double getHoursC() {
+		return hoursC;
+	}
+
+	public void setHoursC(Double hoursC) {
+		this.hoursC = hoursC;
+	}
+
+	public Double getHoursD() {
+		return hoursD;
+	}
+
+	public void setHoursD(Double hoursD) {
+		this.hoursD = hoursD;
+	}
+
+	public Double getFreeA() {
+		return freeA;
+	}
+
+	public void setFreeA(Double freeA) {
+		this.freeA = freeA;
+	}
+
+	public Double getFreeB() {
+		return freeB;
+	}
+
+	public void setFreeB(Double freeB) {
+		this.freeB = freeB;
 	}
 
 	@Override

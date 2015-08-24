@@ -14,6 +14,13 @@ public class Genetic {
 	public double rate;
 	int days;
 	int hours;
+	public double hoursA;
+	public double hoursB;
+	public double hoursC;
+	public double hoursD;
+	
+	public double freeA;
+	public double freeB;
 	
 	public ArrayList<Double> rates;
 
@@ -27,6 +34,54 @@ public class Genetic {
 		this.populationSize = schedule.populationSize;
 		population = new ArrayList<Schedule>();
 		population.add(schedule);
+	}
+
+	public double getHoursA() {
+		return hoursA;
+	}
+
+	public void setHoursA(double hoursA) {
+		this.hoursA = hoursA;
+	}
+
+	public double getHoursB() {
+		return hoursB;
+	}
+
+	public void setHoursB(double hoursB) {
+		this.hoursB = hoursB;
+	}
+
+	public double getHoursC() {
+		return hoursC;
+	}
+
+	public void setHoursC(double hoursC) {
+		this.hoursC = hoursC;
+	}
+
+	public double getHoursD() {
+		return hoursD;
+	}
+
+	public void setHoursD(double hoursD) {
+		this.hoursD = hoursD;
+	}
+
+	public double getFreeA() {
+		return freeA;
+	}
+
+	public void setFreeA(double freeA) {
+		this.freeA = freeA;
+	}
+
+	public double getFreeB() {
+		return freeB;
+	}
+
+	public void setFreeB(double freeB) {
+		this.freeB = freeB;
 	}
 
 	public List<Schedule> getPopulation() {
@@ -248,31 +303,23 @@ public class Genetic {
 	
 	public double rateLessonsNumber(int lessons) {
 
-		double a, b, c, d;
-		a = 2;
-		b = 4;
-		c = 6;
-		d = 8;
-
 		if (lessons == 0) {
 			return 0;
-		} else if(lessons > 0 && lessons <= a){
+		} else if(lessons > 0 && lessons <= this.hoursA){
 			return 1;
-		} else if (lessons > a && lessons <= b) {
-			return (b - lessons) / (b - a);
-		} else if (b < lessons && lessons <= c) {
+		} else if (lessons > this.hoursA && lessons <= this.hoursB) {
+			return (this.hoursB - lessons) / (this.hoursB - this.hoursA);
+		} else if (this.hoursB < lessons && lessons <= this.hoursC) {
 			return 0;
-		} else if (c < lessons && lessons <= d) {
-			return (lessons - c) / (d - c);
+		} else if (this.hoursC < lessons && lessons <= this.hoursD) {
+			return (lessons - this.hoursC) / (this.hoursD - this.hoursC);
 		} else {
 			return 1;
 		}
 	}
 
 	public double rateFreeSlots(int lessons) {
-		double a = 0.5;
-		double b = 0;
-		return a*lessons + b;
+		return this.freeA*lessons + this.freeB;
 	}
 
 	public double getRate() {
