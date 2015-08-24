@@ -76,6 +76,7 @@ public class SchedulesController {
         		schedule.setHoursD(8.0);
         		schedule.setFreeA(0.5);
         		schedule.setFreeB(0.0);
+        		schedule.setHours0(0.0);
         		scheduleService.createSchedule(schedule);
 		}
 	}
@@ -230,6 +231,7 @@ public class SchedulesController {
 		genetic.setHoursD(params.hoursD);
 		genetic.setFreeA(params.freeA);
 		genetic.setFreeB(params.freeB);
+		genetic.setHours0(params.hours0);
 		
 		genetic.setDays(params.getDays());
 		genetic.setHours(params.getHours());
@@ -245,6 +247,7 @@ public class SchedulesController {
 		schedule.setHoursD(params.hoursD);
 		schedule.setFreeA(params.freeA);
 		schedule.setFreeB(params.freeB);
+		schedule.setHours0(params.hours0);
 		schedule.setNumberOfClasses(numberOfClasses);
 		schedule.setOwner(owner);
 		schedule.setDays(params.getDays());

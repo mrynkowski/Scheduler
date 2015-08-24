@@ -8,7 +8,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.resourceAlert = false;
 	$scope.slotAlert = false;
 	$scope.subjectAlert = false;
-
+	$scope.slot = {};
 	
 	$scope.setDayAndHour = function() {
 		$scope.slot.hour = 0;
@@ -111,9 +111,13 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			$scope.params.freeA = data.freeA;
 			$scope.params.freeB = data.freeB;
 			
+			$scope.params.hours0 = data.hours0;
+			
 			$scope.params.populationSize = data.populationSize;
 			$scope.params.iterations = data.iterations;
+			$scope.hours();
 			$scope.chart();
+			$scope.free();
 		});
 		
 	};
@@ -240,9 +244,9 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		$('#graph').empty();
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){
 
-					var m = [ 10, 40, 30, 60 ];
-					var w = 800 - m[1] - m[3];
-					var h = 400 - m[0] - m[2];
+					var m = [ 10, 10, 30, 30 ];
+					var w = 400 - m[1] - m[3];
+					var h = 200 - m[0] - m[2];
 
 					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
@@ -270,4 +274,106 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 							line(data));
 				});
 	};
+	
+	function myFunction(lessons) {
+		if (lessons == $scope.params.hours0) {
+			return 0;
+		} else if(lessons > 0 && lessons <= $scope.params.hoursA){
+			return 1;
+		} else if (lessons > $scope.params.hoursA && lessons <= $scope.params.hoursB) {
+			return ($scope.params.hoursB - lessons) / ($scope.params.hoursB - $scope.params.hoursA);
+		} else if ($scope.params.hoursB < lessons && lessons <= $scope.params.hoursC) {
+			return 0;
+		} else if ($scope.params.hoursC < lessons && lessons <= $scope.params.hoursD) {
+			return (lessons - $scope.params.hoursC) / ($scope.params.hoursD - $scope.params.hoursC);
+		} else {
+			return 1;
+		}             
+	}
+	
+	$scope.hours = function() {
+		$('#hours').empty();
+
+					var lim = 10;
+					var data = [];
+					
+					for(var i = 0; i < lim; i = i + 0.1) {
+						data.push(myFunction(i));
+					}
+		
+					var m = [ 10, 40, 30, 60 ];
+					var w = 400 - m[1] - m[3];
+					var h = 200 - m[0] - m[2];
+
+					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
+					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+					var line = d3.svg.line()
+
+					.x(function(d,i) { 
+						return x(i); 
+					})
+					.y(function(d) { 
+						return y(d); 
+					})
+
+					var graph = d3.select("#hours").append("svg:svg").attr("width", w + m[1] + m[3]).attr("height",
+							h + m[0] + m[2]).append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+					var xAxis = d3.svg.axis().scale(x).orient("bottom").innerTickSize(-h).outerTickSize(0).tickPadding(10);
+
+					graph.append("svg:g").attr("class", "x axis").attr("transform", "translate(0," + h + ")").call(xAxis);
+
+					var yAxis = d3.svg.axis().scale(y).innerTickSize(-w).outerTickSize(0).tickPadding(10).orient("left");
+
+					graph.append("svg:g").attr("class", "y axis").call(yAxis);
+
+					graph.append("svg:path").attr("class", "line").attr("d",
+							line(data));
+				
+	};
+		
+	function freeValue(lessons) {
+		return $scope.params.freeA*lessons + $scope.params.freeB;           
+	}
+	
+	$scope.free = function() {
+		$('#free').empty();
+
+					var lim = 10;
+					var data = [];
+					
+					for(var i = 0; i < lim; i = i + 1) {
+						data.push(freeValue(i));
+					}
+					
+					var m = [ 10, 40, 30, 60 ];
+					var w = 400 - m[1] - m[3];
+					var h = 200 - m[0] - m[2];
+
+					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
+					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+					var line = d3.svg.line()
+
+					.x(function(d,i) { 
+						return x(i); 
+					})
+					.y(function(d) { 
+						return y(d); 
+					})
+
+					var graph = d3.select("#free").append("svg:svg").attr("width", w + m[1] + m[3]).attr("height",
+							h + m[0] + m[2]).append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+					var xAxis = d3.svg.axis().scale(x).orient("bottom").innerTickSize(-h).outerTickSize(0).tickPadding(10);
+
+					graph.append("svg:g").attr("class", "x axis").attr("transform", "translate(0," + h + ")").call(xAxis);
+
+					var yAxis = d3.svg.axis().scale(y).innerTickSize(-w).outerTickSize(0).tickPadding(10).orient("left");
+
+					graph.append("svg:g").attr("class", "y axis").call(yAxis);
+
+					graph.append("svg:path").attr("class", "line").attr("d",
+							line(data));
+				
+	};	
 });

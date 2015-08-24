@@ -70,6 +70,9 @@ public class Schedule implements Cloneable{
 	@Column
 	Double freeB;
 	
+	@Column
+	Double hours0;
+	
 	@JsonIgnore
 	@ElementCollection
 	@CollectionTable(name="rates", joinColumns=@JoinColumn(name="schedule_id"))
@@ -96,6 +99,14 @@ public class Schedule implements Cloneable{
 
 	public String getName() {
 		return name;
+	}
+
+	public Double getHours0() {
+		return hours0;
+	}
+
+	public void setHours0(Double hours0) {
+		this.hours0 = hours0;
 	}
 
 	public Double getHoursA() {

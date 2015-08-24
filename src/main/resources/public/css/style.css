@@ -124,8 +124,18 @@ body {
 }
 
 #graph {
-	width: 800px;
-	height: 400px;
+	width: 400px;
+	height: 200px;
+}
+
+#hours {
+	width: 400px;
+	height: 200px;
+}
+
+#free {
+	width: 400px;
+	height: 200px;
 }
 
 .axis path, .axis line {

@@ -14,6 +14,8 @@ public class Genetic {
 	public double rate;
 	int days;
 	int hours;
+	
+	public double hours0;
 	public double hoursA;
 	public double hoursB;
 	public double hoursC;
@@ -34,6 +36,14 @@ public class Genetic {
 		this.populationSize = schedule.populationSize;
 		population = new ArrayList<Schedule>();
 		population.add(schedule);
+	}
+
+	public double getHours0() {
+		return hours0;
+	}
+
+	public void setHours0(double hours0) {
+		this.hours0 = hours0;
 	}
 
 	public double getHoursA() {
@@ -303,7 +313,7 @@ public class Genetic {
 	
 	public double rateLessonsNumber(int lessons) {
 
-		if (lessons == 0) {
+		if (lessons == hours0) {
 			return 0;
 		} else if(lessons > 0 && lessons <= this.hoursA){
 			return 1;
