@@ -6,7 +6,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import scheduler.Scheduler;
 import scheduler.models.Schedule;
 import scheduler.repositories.AppRepo;
-import scheduler.web.SchedulesController;
+import scheduler.web.DataController;
 
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -15,7 +15,7 @@ public class AppRepoTest {
 
     Schedule s;
     @Autowired
-    SchedulesController sc;
+    DataController sc;
     @Autowired
     AppRepo repo;
 

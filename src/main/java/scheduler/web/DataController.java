@@ -26,7 +26,7 @@ import scheduler.security.SecurityHelper;
 
 @RestController
 @RequestMapping(value = "/rest")
-public class SchedulesController {
+public class DataController {
 
 	@Autowired
 	AppRepo scheduleService;

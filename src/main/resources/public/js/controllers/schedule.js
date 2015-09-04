@@ -10,6 +10,8 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.subjectAlert = false;
 	$scope.slot = {};
 	
+	$scope.parameters = true;
+	
 	$scope.setDayAndHour = function() {
 		$scope.slot.hour = 0;
 		$scope.slot.day = 0;
@@ -47,6 +49,15 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.hideDeleteButtons = function(){
 		$scope.deleteButtons = false;
 	};
+	
+	$scope.showParameters = function(){
+		$scope.parameters = true;
+	};
+	
+	$scope.hideParameters = function(){
+		$scope.parameters = false;
+	};
+	
 	
 	$scope.showSlotDeleteButtons = function(){
 		$scope.deleteSlotButtons = true;
@@ -115,9 +126,11 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			
 			$scope.params.populationSize = data.populationSize;
 			$scope.params.iterations = data.iterations;
+
 			$scope.hours();
 			$scope.chart();
 			$scope.free();
+
 		});
 		
 	};
@@ -243,10 +256,11 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.chart = function() {
 		$('#graph').empty();
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){
-
+		
+	
 					var m = [ 10, 10, 30, 30 ];
-					var w = 400 - m[1] - m[3];
-					var h = 200 - m[0] - m[2];
+					var w = parseInt(d3.select("#graph").style("width")) - m[1] - m[3];		
+					var h = 400 - m[0] - m[2];
 
 					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
@@ -302,8 +316,8 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 					}
 		
 					var m = [ 10, 40, 30, 60 ];
-					var w = 400 - m[1] - m[3];
-					var h = 200 - m[0] - m[2];
+					var w = parseInt(d3.select("#hours").style("width")) - m[1] - m[3];
+					var h = 300 - m[0] - m[2];
 
 					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
@@ -347,8 +361,8 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 					}
 					
 					var m = [ 10, 40, 30, 60 ];
-					var w = 400 - m[1] - m[3];
-					var h = 200 - m[0] - m[2];
+					var w = parseInt(d3.select("#free").style("width")) - m[1] - m[3];
+					var h = 300 - m[0] - m[2];
 
 					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);

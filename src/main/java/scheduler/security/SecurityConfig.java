@@ -24,9 +24,6 @@ import org.springframework.web.util.WebUtils;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-	@Autowired
-	private EntryPointUnauthorizedHandler unauthorizedHandler;
-	
     @Autowired
     private UserDetailServiceImpl userDetailService;
 	
@@ -42,13 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.and().csrf()
 		.csrfTokenRepository(csrfTokenRepository()).and()
 		.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
-    	/*
-		http.httpBasic().and().authorizeRequests()
-		.antMatchers("/**").permitAll().anyRequest()
-		.authenticated().and().csrf()
-		.csrfTokenRepository(csrfTokenRepository()).and()
-		.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
-		*/
     }
     
 	private Filter csrfHeaderFilter() {
