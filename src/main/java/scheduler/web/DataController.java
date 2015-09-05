@@ -19,6 +19,7 @@ import scheduler.models.Account;
 import scheduler.models.Genetic;
 import scheduler.models.Resource;
 import scheduler.models.Schedule;
+import scheduler.models.SchedulesFactory;
 import scheduler.models.Slot;
 import scheduler.models.Subject;
 import scheduler.repositories.AppRepo;
@@ -65,18 +66,7 @@ public class DataController {
 		if(SecurityHelper.isUserLoggedIn(scheduleService, accountId)) {
 				Account account = scheduleService.findAccount(accountId);
 				schedule.setOwner(account);
-				schedule.setNumberOfClasses(0);
-        		schedule.setDays(5);
-        		schedule.setHours(5);
-        		schedule.setIterations(100);
-        		schedule.setPopulationSize(10);
-        		schedule.setHoursA(2.0);
-        		schedule.setHoursB(4.0);
-        		schedule.setHoursC(6.0);
-        		schedule.setHoursD(8.0);
-        		schedule.setFreeA(0.5);
-        		schedule.setFreeB(0.0);
-        		schedule.setHours0(0.0);
+				SchedulesFactory.injectDefaultSettings(schedule);
         		scheduleService.createSchedule(schedule);
 		}
 	}
