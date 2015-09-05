@@ -146,10 +146,27 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public void createResource(Integer id, Resource resource) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-		resource.setSchedule(schedule);
-		em.persist(resource);
+		
+		if(getResourceByName(id, resource.name) == null) {
+			resource.setSchedule(schedule);
+			em.persist(resource);
+		}
 	}
 
+	@Override
+	public Resource getResourceByName(Integer id, String name) {
+		Schedule schedule = em.getReference(Schedule.class, id);
+        Query query = em.createQuery("SELECT r FROM Resource r WHERE r.schedule=?1 AND r.name=?2");
+        query.setParameter(1, schedule);
+        query.setParameter(2, name);
+        List<Resource> resources = query.getResultList();
+        if(resources.size() == 0) {
+            return null;
+        } else {
+            return resources.get(0);
+        }
+	}
+	
 	@Transactional
 	@Override
 	public void deleteSlotsWithClassNumber(Integer classNumber) {
@@ -179,12 +196,29 @@ public class AppRepoImpl implements AppRepo{
 
 	@Transactional
 	@Override
-	public void createSubject(Integer id, Subject data) {
+	public void createSubject(Integer id, Subject subject) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-		data.setSchedule(schedule);
-		em.persist(data);
+		
+		if(findSubjectByName(id, subject.name) == null) {
+			subject.setSchedule(schedule);
+			em.persist(subject);
+		}
 	}
 
+	@Override
+	public Subject findSubjectByName(Integer id, String name) {
+		Schedule schedule = em.getReference(Schedule.class, id);
+        Query query = em.createQuery("SELECT s FROM Subject s WHERE s.schedule=?1 AND s.name=?2");
+        query.setParameter(1, schedule);
+        query.setParameter(2, name);
+        List<Subject> subjects = query.getResultList();
+        if(subjects.size() == 0) {
+            return null;
+        } else {
+            return subjects.get(0);
+        }
+	}
+	
 	@Transactional
 	@Override
 	public void deleteSubject(Integer subjectId) {

@@ -20,7 +20,7 @@ public class Resource implements Cloneable{
 	@Id @GeneratedValue
 	public Integer id;
 	
-	@Column
+	@Column(unique=true)
 	public String name;
 	
 	@Column

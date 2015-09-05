@@ -33,4 +33,6 @@ public interface AppRepo {
 	void deleteSubject(Integer subjectId);
 	void deleteSlotsWithClassNumber(Integer classNumber);
 	void createSlotCopy(Integer id, int i) throws CloneNotSupportedException;
+	Resource getResourceByName(Integer id, String name);
+	Subject findSubjectByName(Integer id, String name);
 }
