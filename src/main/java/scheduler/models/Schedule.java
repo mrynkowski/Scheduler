@@ -8,7 +8,6 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "schedules")
 public class Schedule implements Cloneable{
 
 	@Id
