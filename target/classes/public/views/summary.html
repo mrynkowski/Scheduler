@@ -50,19 +50,37 @@
 			 	<div class="col-sm-2">
 			 		<input type="number" class="form-control " name="quantity" min="1" max="5" ng-model="params.days">
 			 	</div>
+			</div> 	
+			<div class="form-group">				
 			 	<label class="col-sm-1 control-label">Hours:</label>
 			 	<div class="col-sm-2">
 			 		<input type="number" class="form-control" name="quantity" min="1" max="15" ng-model="params.hours">
 			 	</div>
+			</div>
+			<div class="form-group">	 	
 			 	<label class="col-sm-1 control-label">Population:</label>
 			 	<div class="col-sm-2">
 			 		<input type="number" class="form-control" name="quantity" min="1" ng-model="params.populationSize">
 			 	</div>
+			</div> 	
+			<div class="form-group">
 			 	<label class="col-sm-1 control-label">Iterations:</label>
 			 	<div class="col-sm-2">
 			 		<input type="number" class="form-control" name="quantity" min="1" ng-model="params.iterations">
 			 	</div>			 				 				 	
 			</div>
+			<div class="form-group">	 	
+			 	<label class="col-sm-1 control-label">Crossover probability:</label>
+			 	<div class="col-sm-2">
+			 		<input type="number" class="form-control" name="quantity" min="0" max="1" step="0.01" ng-model="params.crossoverProbability">
+			 	</div>
+			</div> 	
+			<div class="form-group">
+			 	<label class="col-sm-1 control-label">Mutation probability:</label>
+			 	<div class="col-sm-2">
+			 		<input type="number" class="form-control" name="quantity" min="0" max="1" step="0.01" ng-model="params.mutationProbability">
+			 	</div>			 				 				 	
+			</div>			
 		</form>
 </div>	
 <div class="col-sm-12">
@@ -71,31 +89,31 @@
 		<svg id="hours"></svg>
 		<form class="form-horizontal">
 		<div class="form-group">
-			<label class="control-label col-sm-1">Zero:</label>
+			<label class="control-label col-sm-2">Zero:</label>
 			<div class="col-sm-4">
 				<input type="number" class="form-control" ng-model="params.hours0" ng-change="hours()">
 			</div>
 		</div>		
 		<div class="form-group">
-			<label class="control-label col-sm-1">A:</label>
+			<label class="control-label col-sm-2">A:</label>
 			<div class="col-sm-4">
 				<input type="number" class="form-control" ng-model="params.hoursA" ng-change="hours()">
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="control-label col-sm-1">B:</label>
+			<label class="control-label col-sm-2">B:</label>
 			<div class="col-sm-4">
 				<input type="number" class="form-control" ng-model="params.hoursB" ng-change="hours()">
 			</div>
 		</div>	
 		<div class="form-group">
-			<label class="control-label col-sm-1">C:</label>
+			<label class="control-label col-sm-2">C:</label>
 			<div class="col-sm-4">
 				<input type="number" class="form-control" ng-model="params.hoursC" ng-change="hours()">
 			</div>
 		</div>	
 		<div class="form-group">
-			<label class="control-label col-sm-1">D:</label>
+			<label class="control-label col-sm-2">D:</label>
 			<div class="col-sm-4">
 				<input type="number" class="form-control" min="1" max="15" ng-model="params.hoursD" ng-change="hours()">
 			</div>
@@ -107,13 +125,13 @@
 		<svg id="free"></svg>
 		<form class="form-horizontal">
 			<div class="form-group">
-				<label class="control-label col-sm-1">A:</label>
+				<label class="control-label col-sm-2">A:</label>
 				<div class="col-sm-4">
 					<input type="number" class="form-control" ng-model="params.freeA" ng-change="free()" step="0.5">
 				</div>							
 			</div>	
 			<div class="form-group">
-				<label class="control-label col-sm-1">B:</label>
+				<label class="control-label col-sm-2">B:</label>
 				<div class="col-sm-4">
 					<input type="number" class="form-control" ng-model="params.freeB" ng-change="free()" step="1">
 				</div>	

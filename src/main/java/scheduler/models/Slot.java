@@ -278,5 +278,7 @@ public class Slot implements Cloneable{
 		
 		return subjectName + "\n" + studentsName + "\n"
 				+ teacherName + "\n" + roomName;
+		/*return classNumber + " " + subjectName + " " + studentsName + " "
+		+ teacherName + " " + roomName + " " + day + " " + hour;*/
 	}	
 }

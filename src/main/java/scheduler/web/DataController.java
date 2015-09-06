@@ -222,7 +222,8 @@ public class DataController {
 		genetic.setFreeA(params.freeA);
 		genetic.setFreeB(params.freeB);
 		genetic.setHours0(params.hours0);
-		
+		genetic.setCrossoverProbability(params.crossoverProbability);
+		genetic.setMutationProbability(params.mutationProbability);
 		genetic.setDays(params.getDays());
 		genetic.setHours(params.getHours());
 		genetic.setiterations(params.getIterations());
@@ -238,13 +239,15 @@ public class DataController {
 		schedule.setFreeA(params.freeA);
 		schedule.setFreeB(params.freeB);
 		schedule.setHours0(params.hours0);
+		schedule.setCrossoverProbability(params.crossoverProbability);
+		schedule.setMutationProbability(params.mutationProbability);
 		schedule.setNumberOfClasses(numberOfClasses);
 		schedule.setOwner(owner);
 		schedule.setDays(params.getDays());
 		schedule.setHours(params.getHours());
 		schedule.setIterations(params.getIterations());
 		schedule.setPopulationSize(params.getPopulationSize());
-		schedule.setRate(genetic.getRate());
+		schedule.setRate(genetic.rates.get(genetic.rates.size()-1));
 		schedule.setRates(genetic.rates);
 		
 		scheduleService.updateSchedule(schedule);

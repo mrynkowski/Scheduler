@@ -15,5 +15,7 @@ public class SchedulesFactory {
 		schedule.setFreeA(0.5);
 		schedule.setFreeB(0.0);
 		schedule.setHours0(0.0);
+		schedule.setCrossoverProbability(1.0);
+		schedule.setMutationProbability(0.1);
 	}
 }

@@ -124,6 +124,9 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			
 			$scope.params.hours0 = data.hours0;
 			
+			$scope.params.crossoverProbability = data.crossoverProbability;
+			$scope.params.mutationProbability = data.mutationProbability;
+			
 			$scope.params.populationSize = data.populationSize;
 			$scope.params.iterations = data.iterations;
 

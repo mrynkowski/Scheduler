@@ -35,10 +35,6 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public Schedule getSchedule(Integer id) {
 		Schedule s = em.find(Schedule.class, id);
-		s.getResources().size();
-		s.getSubjects().size();
-		s.getSlots().size();
-		s.getRates().size();
 		return s;
 	}
 

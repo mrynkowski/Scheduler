@@ -72,6 +72,12 @@ public class Schedule implements Cloneable{
 	@Column
 	Double hours0;
 	
+	@Column
+	Double crossoverProbability;
+	
+	@Column
+	Double mutationProbability;
+	
 	@JsonIgnore
 	@ElementCollection
 	@CollectionTable(name="rates", joinColumns=@JoinColumn(name="schedule_id"))
@@ -276,6 +282,22 @@ public class Schedule implements Cloneable{
 
 	public void setNumberOfClasses(Integer numberOfClasses) {
 		this.numberOfClasses = numberOfClasses;
+	}
+	
+	public Double getCrossoverProbability() {
+		return crossoverProbability;
+	}
+
+	public void setCrossoverProbability(Double crossoverProbability) {
+		this.crossoverProbability = crossoverProbability;
+	}
+
+	public Double getMutationProbability() {
+		return mutationProbability;
+	}
+
+	public void setMutationProbability(Double mutationProbability) {
+		this.mutationProbability = mutationProbability;
 	}
 
 	@Override

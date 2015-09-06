@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Genetic {
 
@@ -24,6 +26,9 @@ public class Genetic {
 	public double freeA;
 	public double freeB;
 	
+	public double crossoverProbability;
+	public double mutationProbability;
+	
 	public ArrayList<Double> rates;
 
 	public Genetic() {
@@ -36,6 +41,22 @@ public class Genetic {
 		this.populationSize = schedule.populationSize;
 		population = new ArrayList<Schedule>();
 		population.add(schedule);
+	}
+
+	public double getCrossoverProbability() {
+		return crossoverProbability;
+	}
+
+	public void setCrossoverProbability(double crossoverProbability) {
+		this.crossoverProbability = crossoverProbability;
+	}
+
+	public double getMutationProbability() {
+		return mutationProbability;
+	}
+
+	public void setMutationProbability(double mutationProbability) {
+		this.mutationProbability = mutationProbability;
 	}
 
 	public double getHours0() {
@@ -122,7 +143,7 @@ public class Genetic {
 		this.hours = hours;
 	}
 
-	public void init() {
+	public void init(Schedule schedule) {
 		for (Slot slot : schedule.slots) {
 			if (!slot.isFixed) {
 				slot.day = Integer.MAX_VALUE;
@@ -183,12 +204,10 @@ public class Genetic {
 		}
 	}
 
-	public void mutation() throws CloneNotSupportedException {
-		Schedule s = population.get((int) (Math.random() * population.size()));
-		Slot removed = (Slot) s.slots
-				.get((int) (Math.random() * s.slots.size()));
+	public Schedule mutation(Schedule mutatedSchedule) throws CloneNotSupportedException {
+		Slot removed = (Slot) mutatedSchedule.slots.get((int) (Math.random() * mutatedSchedule.slots.size()));
 
-		for (Slot slot : s.slots) {
+		for (Slot slot : mutatedSchedule.slots) {
 			if (!slot.isFixed) {
 				if (slot.students.equals(removed.students)
 						&& slot.teacher.equals(removed.teacher)
@@ -202,35 +221,166 @@ public class Genetic {
 
 		}
 		if (!removed.isFixed) {
-			setDayAndHour(removed, s);
+			setDayAndHour(removed, mutatedSchedule);
 		}
+		
+		return mutatedSchedule;
+	}
+	
+	public void crossover(Schedule daddy, Schedule mommy) throws CloneNotSupportedException {
+		
+		//System.out.println("mommy: " + mommyIndex + " daddy: " + daddyIndex);
+
+		/*
+		System.out.println("mommy");
+		for (Slot slot : mommy.slots) {
+			System.out.println(slot);
+		}
+		System.out.println("daddy");
+		for (Slot slot : daddy.slots) {
+			System.out.println(slot);
+		}
+		*/
+		Set<Integer> conflictsSet = conflicts(daddy, mommy);
+		/*
+		for (Integer conflict : conflictsSet) {
+			System.out.println("Conflict:" + conflict);
+		}
+		*/
+		
+		sortSlotsByClassNumber(daddy.slots);
+		sortSlotsByClassNumber(mommy.slots);
+		
+		Schedule boy = (Schedule) daddy.clone();
+		Schedule girl = (Schedule) mommy.clone();
+		
+		for(int i = 0; i < boy.slots.size(); i++) {
+			int classNumber = boy.slots.get(i).getClassNumber();
+			if(!conflictsSet.contains(classNumber)) {
+				boy.slots.set(i, mommy.slots.get(i));	
+			}
+		}
+		
+		for(int i = 0; i < girl.slots.size(); i++) {
+			int classNumber = girl.slots.get(i).getClassNumber();
+			if(!conflictsSet.contains(classNumber)) {
+				girl.slots.set(i, daddy.slots.get(i));
+			}
+		}
+	
+		/*
+		System.out.println("girl");
+		for (Slot slot : girl.slots) {
+			System.out.println(slot);
+		}
+		System.out.println("boy");
+		for (Slot slot : boy.slots) {
+			System.out.println(slot);
+		}
+		System.out.println("Stop");
+		*/
+		
+		population.add(0, boy);
+		population.add(0, girl);
+	}
+	
+	public void sortSlotsByClassNumber(List<Slot> slots) {
+		Collections.sort(slots, new Comparator<Slot>() {
+			@Override
+			public int compare(Slot o1, Slot o2) {
+				int c;
+				c = o1.classNumber.compareTo(o2.classNumber);
+				return c;
+			}
+		});
+	}
+	
+	public Set<Integer> conflicts(Schedule daddy, Schedule mommy) {
+		Set<Integer> conflictsSet = new TreeSet<Integer>();
+		
+		for (Slot daddySlot : daddy.slots) {
+			for (Slot mommySlot : mommy.slots) {
+				if (mommySlot.day == daddySlot.day && mommySlot.hour == daddySlot.hour) {
+					if (daddySlot.students.equals(mommySlot.students) || daddySlot.teacher.equals(mommySlot.teacher) || daddySlot.room.equals(mommySlot.room)) {
+						conflictsSet.add(daddySlot.classNumber);
+						conflictsSet.add(mommySlot.classNumber);
+					}
+				}
+			}
+		}
+		
+		return conflictsSet;
 	}
 	
 	public Schedule optimize() throws CloneNotSupportedException {
-		init();
-
 		rates = new ArrayList<Double>();
-
+		init(this.schedule);
 		for (int i = 1; i < populationSize; i++) {
 			Schedule clone = (Schedule) schedule.clone();
+			init(clone);
 			population.add(clone);
 		}
 
 		for (int i = 0; i < iterations; i++) {
-			mutation();
-			for (Schedule s : population) {
-				sort(s.slots);
-				s.rate = rateSchedule(s);
+			/*
+			for (Schedule schedule : population) {
+				double mutationRandom = Math.random();
+				if (mutationRandom < mutationProbability) {
+					schedule = mutation(schedule);
+				}
 			}
-			sortByRate(population);
-
-			rates.add(population.get(0).rate);
-
+			*/
+			double crossoverRandom = Math.random();
+			if (crossoverRandom < crossoverProbability) {
+				int mommyIndex = (int) (Math.random() * population.size());
+				int daddyIndex = (int) (Math.random() * population.size());
+				Schedule mommy = population.get(mommyIndex);
+				Schedule daddy = population.get(daddyIndex);
+				crossover(daddy, mommy);
+				population.remove(population.size() - 1);
+				population.remove(population.size() - 1);
+			}
+			
+			//Schedule clone = (Schedule) population.get(0).clone();
+			//population.add(clone);
+					
+			for (int j = 0; j < population.size(); j++) {
+				double mutationRandom = Math.random();
+				if (mutationRandom < mutationProbability) {					
+					Schedule clone = (Schedule) population.get(j).clone();
+					population.remove(j);
+					mutation(clone);
+					population.add(0, clone);
+									
+				}				
+			}
+			
 			population.remove(population.size() - 1);
 			Schedule clone = (Schedule) population.get(0).clone();
 			population.add(clone);
+			
+			/*
+			double mutationRandom = Math.random();
+			if (mutationRandom < mutationProbability) {
+				//Schedule mutant = population.get((int) (Math.random() * population.size()));
+				//mutation(mutant);
+				
+				Schedule clone = (Schedule) population.get((int) (Math.random() * population.size())).clone();
+				mutation(clone);
+				population.add(0, clone);
+				population.remove(population.size() - 1);
+				
+			}
+			*/
+			
+			for (Schedule s : population) {
+				s.rate = rateSchedule(s);
+			}
+			
+			sortByRate(population);
+			rates.add(population.get(0).rate);
+
 		}
-		sort(population.get(0).slots);
 		return population.get(0);
 	}
 
@@ -239,25 +389,6 @@ public class Genetic {
 			@Override
 			public int compare(Schedule o1, Schedule o2) {
 				return o1.rate.compareTo(o2.rate);
-			}
-		});
-	}
-
-	public void sort(List<Slot> slots) {
-		Collections.sort(slots, new Comparator<Slot>() {
-			@Override
-			public int compare(Slot o1, Slot o2) {
-				int c;
-				c = o1.day.compareTo(o2.day);
-				if (c == 0) {
-					c = o1.hour.compareTo(o2.hour);
-					/*
-					if (c == 0) {
-						c = o1.students.compareTo(o2.students);
-					}
-					*/
-				}
-				return c;
 			}
 		});
 	}
@@ -297,6 +428,15 @@ public class Genetic {
 	}
 
 	public double rateDay(List<Slot> day){
+		
+		Collections.sort(day, new Comparator<Slot>() {
+			@Override
+			public int compare(Slot o1, Slot o2) {
+				int c = o1.hour.compareTo(o2.hour);
+				return c;
+			}
+		});
+		
 		int freeSlots = 0;
 		double output = 0;
 		if (day.size() > 1) {
@@ -307,6 +447,9 @@ public class Genetic {
 			}
 			output = output + rateFreeSlots(freeSlots);
 		}
+		
+		
+		
 		output = output + rateLessonsNumber(day.size());
 		return output;
 	}
