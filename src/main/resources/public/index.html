@@ -24,9 +24,9 @@
 			<a class="navbar-brand" href="/">Scheduler</a> 
 			<a ng-show="authenticated" class="navbar-brand" href="/user/{{name}}">{{name}}</a>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="">Help</a></li>
-				<li ng-show="!authenticated"><a href="/login">Login</a></li>
-				<li ng-show="authenticated"><a href="/" ng-click="logout()">Logout</a></li>
+				<li ng-show="!authenticated"><a href="/signin">Sign in</a></li>
+				<li ng-show="!authenticated"><a href="/login">Log in</a></li>
+				<li ng-show="authenticated"><a href="/" ng-click="logout()">Log out</a></li>
 			</ul>
 		</nav>
 				<div ng-view=""></div>

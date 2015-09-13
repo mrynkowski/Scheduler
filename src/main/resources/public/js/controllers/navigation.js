@@ -32,15 +32,33 @@ module.controller("Navigation", function($rootScope, $scope, $http, $location, $
 	authenticate();
 
 	$scope.credentials = {};
+
+	$scope.signin = function(account) {
+		
+		var preparedAccount = {};
+		preparedAccount.name = account.username;
+		preparedAccount.password = account.password;
+		
+		$http.post('/rest/signin', preparedAccount).success(function() {
+			authenticate($scope.credentials, function(authenticated) {
+				if (authenticated) {
+					$location.path("/user/"+$rootScope.name);
+					$scope.error = false;
+					$rootScope.authenticated = true;
+				}
+			})
+		});
+		
+
+	};
+	
 	$scope.login = function() {
 		authenticate($scope.credentials, function(authenticated) {
 			if (authenticated) {
-				console.log("Login succeeded")
 				$location.path("/user/"+$rootScope.name);
 				$scope.error = false;
 				$rootScope.authenticated = true;
 			} else {
-				console.log("Login failed")
 				$location.path("/login");
 				$scope.error = true;
 				$rootScope.authenticated = false;

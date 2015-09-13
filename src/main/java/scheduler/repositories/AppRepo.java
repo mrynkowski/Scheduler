@@ -9,6 +9,7 @@ import scheduler.models.Slot;
 import scheduler.models.Subject;
 
 public interface AppRepo {
+	void createAccount(Account account);
 	Account findAccount(Long id);
 	Account findByAccountName(String name);
 	Schedule updateSchedule(Schedule schedule);

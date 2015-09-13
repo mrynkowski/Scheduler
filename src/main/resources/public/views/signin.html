@@ -1,0 +1,9 @@
+<div class="container">
+	<form class="form-signin" ng-submit="signin(credentials)">
+		<h2 class="form-signin-heading">Create your account</h2>
+		<input type="text" class="form-control" placeholder="Username" required="" autofocus="" ng-model="credentials.username"> 
+		<input type="password" class="form-control" placeholder="Password" required="" ng-model="credentials.password">
+		<button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom: 10px">Sign in</button>
+		<div class="alert alert-danger" ng-show="error">There was a problem signing in. Please try again.</div>
+	</form>
+</div>

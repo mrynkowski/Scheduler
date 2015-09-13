@@ -2,7 +2,9 @@ package scheduler.web;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +47,12 @@ public class DataController {
 	@RequestMapping("/logout")
 	public void logout(Principal user) {
 		SecurityContextHolder.getContext().setAuthentication(null);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/signin", method = RequestMethod.POST)
+	public void createAccount(@RequestBody Account account) {	
+		scheduleService.createAccount(account);
 	}
 	
     @RequestMapping( value="/{accountId}", method = RequestMethod.GET)
@@ -198,9 +206,12 @@ public class DataController {
 	}
 	
 	@RequestMapping(value = "/{accountId}/schedules/{id}/slots", method = RequestMethod.GET)
-	public @ResponseBody List<Slot> getSlots(@PathVariable Integer id) {
+	public @ResponseBody Set<Slot> getSlots(@PathVariable Integer id) {
 		Schedule schedule = scheduleService.getSchedule(id);
-		return schedule.getSlots();
+		Set<Slot> slotsSet = new HashSet<Slot>();
+		slotsSet.addAll(schedule.getSlots());
+		
+		return slotsSet;
 	}
 
 	@RequestMapping(value = "/{accountId}/schedules/{id}/rates", method = RequestMethod.GET)

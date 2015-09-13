@@ -9,7 +9,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.slotAlert = false;
 	$scope.subjectAlert = false;
 	$scope.slot = {};
-	
+	$scope.generating = false;
 	$scope.parameters = true;
 	
 	$scope.setDayAndHour = function() {
@@ -210,7 +210,9 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	
 	
 	$scope.generate = function(params) {
+		$scope.generating = true;
 		$http.post('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/generate', params).success(function(){
+			$scope.generating = false;
 			$scope.fetchSchedule();
 			$scope.fetchResources();
 			$scope.fetchSubjects();
@@ -261,7 +263,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){
 		
 	
-					var m = [ 10, 10, 30, 30 ];
+					var m = [ 10, 30, 30, 30 ];
 					var w = parseInt(d3.select("#graph").style("width")) - m[1] - m[3];		
 					var h = 400 - m[0] - m[2];
 

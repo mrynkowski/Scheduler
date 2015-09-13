@@ -8,6 +8,9 @@ module.config(function($routeProvider, $locationProvider, $httpProvider) {
 	}).when('/user/:user', {
 		templateUrl : '/views/user.html',
 		controller : 'User'
+	}).when('/signin', {
+		templateUrl : '/views/signin.html',
+		controller : 'Navigation'
 	}).when('/login', {
 		templateUrl : '/views/login.html',
 		controller : 'Navigation'

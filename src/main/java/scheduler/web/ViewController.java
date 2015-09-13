@@ -11,6 +11,7 @@ public class ViewController {
 		"/user/{\\w+}",
 		"/user",
 		"/login",
+		"/signin",
 	    "/"
 	})
 	public String index() {

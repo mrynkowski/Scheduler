@@ -52,7 +52,7 @@
 		<div class="list-group" ng-show="resources.length > 0">
 			<div ng-class="{active : element.id == activeElement}"
 				class="list-group-item"
-				ng-repeat="element in resources | orderBy: 'name'"
+				ng-repeat="element in resources | orderBy: 'id'"
 				ng-click=fetchGrid(element.id)>
 				{{element.name}} <input ng-show="deleteButtons"
 					style="float: right;" class="btn btn-xs btn-danger del btn-small"

@@ -1,6 +1,6 @@
 <div class="toolbar col-sm-12">
-	<input type="button" value="Generate"
-		class="btn btn-primary run btn-medium" ng-click="generate(params)">
+	<button type="button"
+		class="btn btn-primary run btn-medium" ng-click="generate(params)">	<span ng-show="generating" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Generate</button>
 			<!-- 
 	<input
 		ng-show="!parameters" type="button"

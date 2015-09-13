@@ -17,7 +17,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title">New Slot</h4>
+					<h4 class="modal-title">New Class</h4>
 				</div>
 				<div class="modal-body">
 						<div ng-show="slotAlert" id="formAlert" class="alert alert-warning fade in">						        	
@@ -93,19 +93,19 @@
 		ng-show="slots.length > 0">
 		<thead>
 			<tr>
-				<th><a href=""
+				<th class="col-sm-1"><a href=""
 					ng-click="reverse=!reverse; order('day', reverse)">Day</th>
-				<th><a href=""
+				<th class="col-sm-1"><a href=""
 					ng-click="reverse=!reverse; order('hour', reverse)">Hour</th>
-				<th><a href=""
+				<th class="col-sm-2"><a href=""
 					ng-click="reverse=!reverse; order('room', reverse)">Room</th>
-				<th><a href=""
-					ng-click="reverse=!reverse; order('subject', reverse)">Subject</th>
-				<th><a href=""
-					ng-click="reverse=!reverse; order('students', reverse)">Students</th>
-				<th><a href=""
-					ng-click="reverse=!reverse; order('teacher', reverse)">Teacher</th>
-				<th><a href=""
+				<th class="col-sm-2"><a href=""
+					ng-click="reverse=!reverse; order('subject.name', reverse)">Subject</th>
+				<th class="col-sm-2"><a href=""
+					ng-click="reverse=!reverse; order('students.name', reverse)">Students</th>
+				<th class="col-sm-2"><a href=""
+					ng-click="reverse=!reverse; order('teacher.name', reverse)">Teacher</th>
+				<th class="col-sm-1"><a href=""
 					ng-click="reverse=!reverse; order('duration', reverse)">Duration</th>
 			</tr>
 		</thead>

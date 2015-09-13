@@ -239,4 +239,10 @@ public class AppRepoImpl implements AppRepo{
 		Subject subject = em.find(Subject.class, id);
 		return subject;
 	}
+
+	@Transactional
+	@Override
+	public void createAccount(Account account) {
+		em.persist(account);
+	}
 }

@@ -35,7 +35,7 @@
 <div class="col-sm-12">
 	<div class="list-group" ng-show="subjects.length > 0">
 		<div class="list-group-item"
-			ng-repeat="subject in subjects | orderBy: 'name'">
+			ng-repeat="subject in subjects | orderBy: 'subject.name'">
 			{{subject.name}} <input ng-show="deleteSubjectButtons"
 				style="float: right;" class="btn btn-xs btn-danger del btn-small"
 				type="text" value="Delete" ng-click="deleteSubject(subject)">

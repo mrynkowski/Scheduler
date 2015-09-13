@@ -255,16 +255,36 @@ public class Genetic {
 		Schedule girl = (Schedule) mommy.clone();
 		
 		for(int i = 0; i < boy.slots.size(); i++) {
-			int classNumber = boy.slots.get(i).getClassNumber();
-			if(!conflictsSet.contains(classNumber)) {
-				boy.slots.set(i, mommy.slots.get(i));	
+			if (!boy.slots.get(i).isFixed) {
+				
+			
+			if (!conflictsSet.contains(boy.slots.get(i).getClassNumber())) {
+				int duration = boy.slots.get(i).getDuration();
+				
+				if (Math.random() < 0.5) {
+					for (int j = 0; j < duration-1; j++) {
+						boy.slots.set(i+j, mommy.slots.get(i+j));	
+					}
+				}
+				i = i + duration;
+			}
 			}
 		}
 		
 		for(int i = 0; i < girl.slots.size(); i++) {
-			int classNumber = girl.slots.get(i).getClassNumber();
-			if(!conflictsSet.contains(classNumber)) {
-				girl.slots.set(i, daddy.slots.get(i));
+			if (!girl.slots.get(i).isFixed) {
+				
+			
+			if(!conflictsSet.contains(girl.slots.get(i).getClassNumber())) {
+				int duration = boy.slots.get(i).getDuration();
+				
+				if (Math.random() < 0.5) {
+					for (int j = 0; j < duration-1; j++) {
+						girl.slots.set(i+j, daddy.slots.get(i+j));						
+					}
+				}		
+				i = i + duration;
+			}
 			}
 		}
 	
@@ -299,14 +319,18 @@ public class Genetic {
 		Set<Integer> conflictsSet = new TreeSet<Integer>();
 		
 		for (Slot daddySlot : daddy.slots) {
-			for (Slot mommySlot : mommy.slots) {
-				if (mommySlot.day == daddySlot.day && mommySlot.hour == daddySlot.hour) {
-					if (daddySlot.students.equals(mommySlot.students) || daddySlot.teacher.equals(mommySlot.teacher) || daddySlot.room.equals(mommySlot.room)) {
-						conflictsSet.add(daddySlot.classNumber);
-						conflictsSet.add(mommySlot.classNumber);
+			if (!daddySlot.isFixed) {
+				for (Slot mommySlot : mommy.slots) {
+					if (mommySlot.day == daddySlot.day && mommySlot.hour == daddySlot.hour) {
+
+						if (daddySlot.students.equals(mommySlot.students) || daddySlot.teacher.equals(mommySlot.teacher) || daddySlot.room.equals(mommySlot.room)) {
+							conflictsSet.add(daddySlot.classNumber);
+							conflictsSet.add(mommySlot.classNumber);
+						}
 					}
-				}
+				}				
 			}
+
 		}
 		
 		return conflictsSet;
@@ -322,6 +346,7 @@ public class Genetic {
 		}
 
 		for (int i = 0; i < iterations; i++) {
+			System.out.println("Iteration: " + i);
 			/*
 			for (Schedule schedule : population) {
 				double mutationRandom = Math.random();
