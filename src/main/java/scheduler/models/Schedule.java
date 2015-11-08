@@ -3,7 +3,17 @@ package scheduler.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,7 +26,7 @@ public class Schedule implements Cloneable{
 
     @ManyToOne(targetEntity=Account.class)    
 	@JoinColumn(name="account_id")
-    private Account owner;
+    Account owner;
 	
 	@JsonIgnore
 	@OneToMany(orphanRemoval=true, targetEntity=Resource.class, cascade = CascadeType.ALL, mappedBy = "schedule")
@@ -170,6 +180,22 @@ public class Schedule implements Cloneable{
 		clone.hours = hours;
 		clone.subjects.addAll(subjects);
 		clone.resources.addAll(resources);
+		clone.setHours0(hours0);
+		clone.setHoursA(hoursA);
+		clone.setHoursB(hoursB);
+		clone.setHoursC(hoursC);
+		clone.setHoursD(hoursD);
+		clone.setFreeA(freeA);
+		clone.setFreeB(freeB);
+		clone.setCrossoverProbability(crossoverProbability);
+		clone.setMutationProbability(mutationProbability);
+		clone.setDays(days);
+		clone.setHours(hours);
+		clone.setIterations(iterations);
+		clone.setPopulationSize(populationSize);
+		clone.setNumberOfClasses(numberOfClasses);
+		clone.setRate(rate);
+		clone.setRates(rates);
 		
 		List<Resource> resCopy = new ArrayList<Resource>();
 		for(Resource res : resources){

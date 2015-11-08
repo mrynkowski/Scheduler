@@ -25,7 +25,6 @@ import scheduler.models.SchedulesFactory;
 import scheduler.models.Slot;
 import scheduler.models.Subject;
 import scheduler.repositories.AppRepo;
-import scheduler.security.SecurityHelper;
 
 @RestController
 @RequestMapping(value = "/rest")
@@ -62,21 +61,16 @@ public class DataController {
 
 	@RequestMapping(value = "/{accountId}/schedules", method = RequestMethod.GET)
 	public @ResponseBody List<Schedule> schedules(@PathVariable Long accountId) {
-            if(SecurityHelper.isUserLoggedIn(scheduleService, accountId)) {
-            	return scheduleService.getSchedulesByAccountId(accountId);
-            }
-		return null;
+		return scheduleService.getSchedulesByAccountId(accountId);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules", method = RequestMethod.POST)
 	public void createSchedule(@PathVariable Long accountId, @RequestBody Schedule schedule) {		
-		if(SecurityHelper.isUserLoggedIn(scheduleService, accountId)) {
 				Account account = scheduleService.findAccount(accountId);
 				schedule.setOwner(account);
 				SchedulesFactory.injectDefaultSettings(schedule);
         		scheduleService.createSchedule(schedule);
-		}
 	}
 	
 	@RequestMapping(value = "/{accountId}/schedules/{id}", method = RequestMethod.DELETE)
@@ -92,7 +86,7 @@ public class DataController {
 	public List<Slot> getSlotsBy(Resource name, List<Slot> slots)  {
 		List<Slot> list = new ArrayList<Slot>();
 		for (Slot slot : slots) {
-			if (name.equals(slot.students) || name.equals(slot.teacher) || name.equals(slot.room)) {
+			if (name.equals(slot.getStudents()) || name.equals(slot.getTeacher()) || name.equals(slot.getRoom())) {
 				list.add(slot);
 			}
 		}
@@ -129,8 +123,8 @@ public class DataController {
 			}
 			List<Slot> data = getSlotsBy(name, slots);
 			for (Slot slot : data) {
-				if(slot.hour != null){
-					grid.get(slot.hour).set(slot.day, slot.toString());
+				if(slot.getHour() != null){
+					grid.get(slot.getHour()).set(slot.getDay(), slot.toString());
 				}
 			}
 			return grid;
@@ -156,6 +150,10 @@ public class DataController {
 			subject =  scheduleService.findSubject(data.getSubject().getId());
 		}
 		
+		if (data.isFixed() == null) {
+			data.setFixed(false);
+		}
+		
 		Schedule schedule = scheduleService.getSchedule(id);
 		Integer numberOfClasses = schedule.getNumberOfClasses();
 		data.setClassNumber(numberOfClasses);
@@ -167,8 +165,8 @@ public class DataController {
 		data.setSubject(subject);
 		
 		scheduleService.createSlot(id, data);
-		for(int i = 1; i < data.duration; i++){
-			if (data.isFixed) {
+		for(int i = 1; i < data.getDuration(); i++){
+			if (data.isFixed()) {
 				scheduleService.createSlotCopy(data.getId(), i);
 			} else {
 				scheduleService.createSlotCopy(data.getId());
@@ -221,46 +219,31 @@ public class DataController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{accountId}/schedules/{id}/generate", method = RequestMethod.POST)
-	public @ResponseBody void generate(@PathVariable Long accountId, @PathVariable Integer id, @RequestBody Genetic params) throws CloneNotSupportedException {
+	public @ResponseBody void generate(@PathVariable Long accountId, @PathVariable Integer id, @RequestBody Schedule updatedSchedule) throws CloneNotSupportedException {
 		Schedule schedule = scheduleService.getSchedule(id);
+
+		schedule.setHours0(updatedSchedule.getHours0());
+		schedule.setHoursA(updatedSchedule.getHoursA());
+		schedule.setHoursB(updatedSchedule.getHoursB());
+		schedule.setHoursC(updatedSchedule.getHoursC());
+		schedule.setHoursD(updatedSchedule.getHoursD());
+		schedule.setFreeA(updatedSchedule.getFreeA());
+		schedule.setFreeB(updatedSchedule.getFreeB());
+		schedule.setCrossoverProbability(updatedSchedule.getCrossoverProbability());
+		schedule.setMutationProbability(updatedSchedule.getMutationProbability());
+		schedule.setDays(updatedSchedule.getDays());
+		schedule.setHours(updatedSchedule.getHours());
+		schedule.setIterations(updatedSchedule.getIterations());
+		schedule.setPopulationSize(updatedSchedule.getPopulationSize());
+		scheduleService.updateSchedule(schedule);	
 		
-		int numberOfClasses = schedule.getNumberOfClasses();
-		Genetic genetic = new Genetic(schedule);
-		genetic.setHoursA(params.hoursA);
-		genetic.setHoursB(params.hoursB);
-		genetic.setHoursC(params.hoursC);
-		genetic.setHoursD(params.hoursD);
-		genetic.setFreeA(params.freeA);
-		genetic.setFreeB(params.freeB);
-		genetic.setHours0(params.hours0);
-		genetic.setCrossoverProbability(params.crossoverProbability);
-		genetic.setMutationProbability(params.mutationProbability);
-		genetic.setDays(params.getDays());
-		genetic.setHours(params.getHours());
-		genetic.setiterations(params.getIterations());
-		genetic.setPopulationSize(params.getPopulationSize());
-		
-		schedule = genetic.optimize();
+		Genetic ga = new Genetic();
+		ga.setSchedule(schedule);
+		schedule = ga.optimize();
 		
 		Account owner = scheduleService.findAccount(accountId);
-		schedule.setHoursA(params.hoursA);
-		schedule.setHoursB(params.hoursB);
-		schedule.setHoursC(params.hoursC);
-		schedule.setHoursD(params.hoursD);
-		schedule.setFreeA(params.freeA);
-		schedule.setFreeB(params.freeB);
-		schedule.setHours0(params.hours0);
-		schedule.setCrossoverProbability(params.crossoverProbability);
-		schedule.setMutationProbability(params.mutationProbability);
-		schedule.setNumberOfClasses(numberOfClasses);
 		schedule.setOwner(owner);
-		schedule.setDays(params.getDays());
-		schedule.setHours(params.getHours());
-		schedule.setIterations(params.getIterations());
-		schedule.setPopulationSize(params.getPopulationSize());
-		schedule.setRate(genetic.rates.get(genetic.rates.size()-1));
-		schedule.setRates(genetic.rates);
-		
+				
 		scheduleService.updateSchedule(schedule);
 	}
 }

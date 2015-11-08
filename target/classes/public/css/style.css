@@ -45,7 +45,6 @@ body {
 
 .navbar-fixed-top {
 	border: 0;
-	min-width: 1000px;
 }
 
 .main {
@@ -83,6 +82,10 @@ body {
 
 .h{
 	max-width: 20px;
+}
+
+.filter {
+	margin-bottom: 10px;	
 }
 
 .placeholder {

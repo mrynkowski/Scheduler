@@ -9,143 +9,30 @@ import java.util.TreeSet;
 
 public class Genetic {
 
-	public Schedule schedule;
-	public List<Schedule> population;
-	public int populationSize;
-	public int iterations;
-	public double rate;
-	int days;
-	int hours;
-	
-	public double hours0;
-	public double hoursA;
-	public double hoursB;
-	public double hoursC;
-	public double hoursD;
-	
-	public double freeA;
-	public double freeB;
-	
-	public double crossoverProbability;
-	public double mutationProbability;
-	
-	public ArrayList<Double> rates;
+	Schedule schedule;
+	List<Schedule> population;
 
 	public Genetic() {
 		super();
 	}
 
-	public Genetic(Schedule schedule) {
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
-		this.iterations = schedule.iterations;
-		this.populationSize = schedule.populationSize;
 		population = new ArrayList<Schedule>();
-		population.add(schedule);
-	}
-
-	public double getCrossoverProbability() {
-		return crossoverProbability;
-	}
-
-	public void setCrossoverProbability(double crossoverProbability) {
-		this.crossoverProbability = crossoverProbability;
-	}
-
-	public double getMutationProbability() {
-		return mutationProbability;
-	}
-
-	public void setMutationProbability(double mutationProbability) {
-		this.mutationProbability = mutationProbability;
-	}
-
-	public double getHours0() {
-		return hours0;
-	}
-
-	public void setHours0(double hours0) {
-		this.hours0 = hours0;
-	}
-
-	public double getHoursA() {
-		return hoursA;
-	}
-
-	public void setHoursA(double hoursA) {
-		this.hoursA = hoursA;
-	}
-
-	public double getHoursB() {
-		return hoursB;
-	}
-
-	public void setHoursB(double hoursB) {
-		this.hoursB = hoursB;
-	}
-
-	public double getHoursC() {
-		return hoursC;
-	}
-
-	public void setHoursC(double hoursC) {
-		this.hoursC = hoursC;
-	}
-
-	public double getHoursD() {
-		return hoursD;
-	}
-
-	public void setHoursD(double hoursD) {
-		this.hoursD = hoursD;
-	}
-
-	public double getFreeA() {
-		return freeA;
-	}
-
-	public void setFreeA(double freeA) {
-		this.freeA = freeA;
-	}
-
-	public double getFreeB() {
-		return freeB;
-	}
-
-	public void setFreeB(double freeB) {
-		this.freeB = freeB;
+		population.add(schedule);	
 	}
 
 	public List<Schedule> getPopulation() {
 		return population;
 	}
 
-	public int getPopulationSize() {
-		return populationSize;
-	}
-
-	public void setPopulationSize(int populationSize) {
-		this.populationSize = populationSize;
-	}
-	
-	public int getDays() {
-		return days;
-	}
-
-	public void setDays(int days) {
-		this.days = days;
-	}
-
-	public int getHours() {
-		return hours;
-	}
-
-	public void setHours(int hours) {
-		this.hours = hours;
-	}
-
 	public void init(Schedule schedule) {
 		for (Slot slot : schedule.slots) {
-			if (!slot.isFixed) {
+			if (!slot.fixed) {
 				slot.day = Integer.MAX_VALUE;
 				slot.hour = Integer.MAX_VALUE;
 
@@ -162,7 +49,7 @@ public class Genetic {
 			}
 		}
 		for (Slot slot : schedule.slots) {
-			if (!slot.isFixed) {
+			if (!slot.fixed) {
 				setDayAndHour(slot, schedule);	
 			}
 		}
@@ -208,7 +95,7 @@ public class Genetic {
 		Slot removed = (Slot) mutatedSchedule.slots.get((int) (Math.random() * mutatedSchedule.slots.size()));
 
 		for (Slot slot : mutatedSchedule.slots) {
-			if (!slot.isFixed) {
+			if (!slot.fixed) {
 				if (slot.students.equals(removed.students)
 						&& slot.teacher.equals(removed.teacher)
 						&& slot.subject.equals(removed.subject)
@@ -220,33 +107,15 @@ public class Genetic {
 			}
 
 		}
-		if (!removed.isFixed) {
+		if (!removed.fixed) {
 			setDayAndHour(removed, mutatedSchedule);
 		}
 		
 		return mutatedSchedule;
 	}
 	
-	public void crossover(Schedule daddy, Schedule mommy) throws CloneNotSupportedException {
-		
-		//System.out.println("mommy: " + mommyIndex + " daddy: " + daddyIndex);
-
-		/*
-		System.out.println("mommy");
-		for (Slot slot : mommy.slots) {
-			System.out.println(slot);
-		}
-		System.out.println("daddy");
-		for (Slot slot : daddy.slots) {
-			System.out.println(slot);
-		}
-		*/
+	public void crossover(Schedule daddy, Schedule mommy) throws CloneNotSupportedException {		
 		Set<Integer> conflictsSet = conflicts(daddy, mommy);
-		/*
-		for (Integer conflict : conflictsSet) {
-			System.out.println("Conflict:" + conflict);
-		}
-		*/
 		
 		sortSlotsByClassNumber(daddy.slots);
 		sortSlotsByClassNumber(mommy.slots);
@@ -255,53 +124,45 @@ public class Genetic {
 		Schedule girl = (Schedule) mommy.clone();
 		
 		for(int i = 0; i < boy.slots.size(); i++) {
-			if (!boy.slots.get(i).isFixed) {
+			if (!boy.slots.get(i).fixed) {
 				
-			
-			if (!conflictsSet.contains(boy.slots.get(i).getClassNumber())) {
-				int duration = boy.slots.get(i).getDuration();
-				
-				if (Math.random() < 0.5) {
-					for (int j = 0; j < duration-1; j++) {
-						boy.slots.set(i+j, mommy.slots.get(i+j));	
+				if (!conflictsSet.contains(boy.slots.get(i).getClassNumber())) {
+					int duration = boy.slots.get(i).getDuration();
+					
+					if (Math.random() < 0.5) {
+						for (int j = 0; j < duration-1; j++) {
+							if (i+j == 10) {
+								System.out.println("break");
+							}
+							boy.slots.set(i+j, mommy.slots.get(i+j));	
+						}
 					}
+					i = i + duration-1;
 				}
-				i = i + duration;
-			}
 			}
 		}
 		
 		for(int i = 0; i < girl.slots.size(); i++) {
-			if (!girl.slots.get(i).isFixed) {
+			if (!girl.slots.get(i).fixed) {
 				
-			
-			if(!conflictsSet.contains(girl.slots.get(i).getClassNumber())) {
-				int duration = boy.slots.get(i).getDuration();
-				
-				if (Math.random() < 0.5) {
-					for (int j = 0; j < duration-1; j++) {
-						girl.slots.set(i+j, daddy.slots.get(i+j));						
-					}
-				}		
-				i = i + duration;
+				if(!conflictsSet.contains(girl.slots.get(i).getClassNumber())) {
+					int duration = boy.slots.get(i).getDuration();
+					
+					if (Math.random() < 0.5) {
+						for (int j = 0; j < duration-1; j++) {
+							if (i+j == 10) {
+								System.out.println("break");
+							}
+							girl.slots.set(i+j, daddy.slots.get(i+j));						
+						}
+					}		
+					i = i + duration-1;
+				}
 			}
-			}
 		}
-	
-		/*
-		System.out.println("girl");
-		for (Slot slot : girl.slots) {
-			System.out.println(slot);
-		}
-		System.out.println("boy");
-		for (Slot slot : boy.slots) {
-			System.out.println(slot);
-		}
-		System.out.println("Stop");
-		*/
 		
-		population.add(0, boy);
-		population.add(0, girl);
+		population.add(boy);
+		population.add(girl);
 	}
 	
 	public void sortSlotsByClassNumber(List<Slot> slots) {
@@ -319,7 +180,7 @@ public class Genetic {
 		Set<Integer> conflictsSet = new TreeSet<Integer>();
 		
 		for (Slot daddySlot : daddy.slots) {
-			if (!daddySlot.isFixed) {
+			if (!daddySlot.fixed) {
 				for (Slot mommySlot : mommy.slots) {
 					if (mommySlot.day == daddySlot.day && mommySlot.hour == daddySlot.hour) {
 
@@ -330,83 +191,78 @@ public class Genetic {
 					}
 				}				
 			}
-
 		}
 		
 		return conflictsSet;
 	}
 	
 	public Schedule optimize() throws CloneNotSupportedException {
-		rates = new ArrayList<Double>();
+		if (this.schedule.slots.size() > 0) {
+		this.schedule.rates = new ArrayList<Double>();
+		System.out.println("Init: 0");
 		init(this.schedule);
-		for (int i = 1; i < populationSize; i++) {
+		for (int i = 1; i < this.schedule.populationSize; i++) {
+			System.out.println("Init: " + i);
 			Schedule clone = (Schedule) schedule.clone();
 			init(clone);
 			population.add(clone);
 		}
 
-		for (int i = 0; i < iterations; i++) {
-			System.out.println("Iteration: " + i);
-			/*
-			for (Schedule schedule : population) {
-				double mutationRandom = Math.random();
-				if (mutationRandom < mutationProbability) {
-					schedule = mutation(schedule);
+		for (Schedule s : population) {
+			s.rate = rateSchedule(s);
+		}
+			
+		sortByRate(population);
+		
+		for (int i = 0; i < this.schedule.iterations; i++) {
+			
+			System.out.println("i: " + i);
+			
+			int numberOfCrossovers = (int) (population.size()*0.1);
+			
+			for (int j = 0; j < numberOfCrossovers; j++) {
+				double crossoverRandom = Math.random();
+				
+				if (crossoverRandom < this.schedule.crossoverProbability) {
+					int mommyRandom = (int)(Math.random()*population.size()*0.1);
+					int daddyRandom = (int)(Math.random()*population.size()*0.1);
+					Schedule mommy = population.get(mommyRandom);
+					Schedule daddy = population.get(daddyRandom);
+					crossover(daddy, mommy);
 				}
 			}
-			*/
-			double crossoverRandom = Math.random();
-			if (crossoverRandom < crossoverProbability) {
-				int mommyIndex = (int) (Math.random() * population.size());
-				int daddyIndex = (int) (Math.random() * population.size());
-				Schedule mommy = population.get(mommyIndex);
-				Schedule daddy = population.get(daddyIndex);
-				crossover(daddy, mommy);
-				population.remove(population.size() - 1);
-				population.remove(population.size() - 1);
-			}
-			
-			//Schedule clone = (Schedule) population.get(0).clone();
-			//population.add(clone);
 					
 			for (int j = 0; j < population.size(); j++) {
 				double mutationRandom = Math.random();
-				if (mutationRandom < mutationProbability) {					
+				if (mutationRandom < this.schedule.mutationProbability) {					
 					Schedule clone = (Schedule) population.get(j).clone();
 					population.remove(j);
 					mutation(clone);
-					population.add(0, clone);
+					population.add(clone);
 									
 				}				
 			}
 			
-			population.remove(population.size() - 1);
-			Schedule clone = (Schedule) population.get(0).clone();
-			population.add(clone);
-			
-			/*
-			double mutationRandom = Math.random();
-			if (mutationRandom < mutationProbability) {
-				//Schedule mutant = population.get((int) (Math.random() * population.size()));
-				//mutation(mutant);
-				
-				Schedule clone = (Schedule) population.get((int) (Math.random() * population.size())).clone();
-				mutation(clone);
-				population.add(0, clone);
-				population.remove(population.size() - 1);
-				
-			}
-			*/
-			
 			for (Schedule s : population) {
 				s.rate = rateSchedule(s);
 			}
-			
+					
 			sortByRate(population);
-			rates.add(population.get(0).rate);
+			
+			if (population.size() > this.schedule.populationSize) {
+				for (int j = population.size()-1; j >= this.schedule.populationSize; j--) {
+					population.remove(j);
+				}
+			}
+			
+			this.schedule.rates.add(population.get(0).rate);
 
 		}
+		System.out.println(population.size());
 		return population.get(0);
+		} else {
+			return this.schedule;
+		}
 	}
 
 	public void sortByRate(List<Schedule> p) {
@@ -431,7 +287,8 @@ public class Genetic {
 	}
 
 	public double rateSchedule(Schedule schedule) {
-		rate = 0;
+		this.schedule.rate = 0.0;
+		
 		for (Resource res : schedule.resources) {
 			
 			if (res.getType().equals("students") || res.getType().equals("teacher")) {
@@ -445,11 +302,11 @@ public class Genetic {
 						}
 					}
 
-					rate = rate + rateDay(day);
+					this.schedule.rate = this.schedule.rate + rateDay(day);
 				}
 			}
 		}
-		return rate;
+		return this.schedule.rate;
 	}
 
 	public double rateDay(List<Slot> day){
@@ -473,42 +330,28 @@ public class Genetic {
 			output = output + rateFreeSlots(freeSlots);
 		}
 		
-		
-		
 		output = output + rateLessonsNumber(day.size());
+		
 		return output;
 	}
 	
 	public double rateLessonsNumber(int lessons) {
-
-		if (lessons == hours0) {
+		if (lessons == this.schedule.hours0) {
 			return 0;
-		} else if(lessons > 0 && lessons <= this.hoursA){
+		} else if(lessons > 0 && lessons <= this.schedule.hoursA){
 			return 1;
-		} else if (lessons > this.hoursA && lessons <= this.hoursB) {
-			return (this.hoursB - lessons) / (this.hoursB - this.hoursA);
-		} else if (this.hoursB < lessons && lessons <= this.hoursC) {
+		} else if (lessons > this.schedule.hoursA && lessons <= this.schedule.hoursB) {
+			return (this.schedule.hoursB - lessons) / (this.schedule.hoursB - this.schedule.hoursA);
+		} else if (this.schedule.hoursB < lessons && lessons <= this.schedule.hoursC) {
 			return 0;
-		} else if (this.hoursC < lessons && lessons <= this.hoursD) {
-			return (lessons - this.hoursC) / (this.hoursD - this.hoursC);
+		} else if (this.schedule.hoursC < lessons && lessons <= this.schedule.hoursD) {
+			return (lessons - this.schedule.hoursC) / (this.schedule.hoursD - this.schedule.hoursC);
 		} else {
 			return 1;
 		}
 	}
 
 	public double rateFreeSlots(int lessons) {
-		return this.freeA*lessons + this.freeB;
-	}
-
-	public double getRate() {
-		return rate;
-	}
-
-	public int getIterations() {
-		return iterations;
-	}
-
-	public void setiterations(int iterations) {
-		this.iterations = iterations;
+		return this.schedule.freeA*lessons + this.schedule.freeB;
 	}
 }

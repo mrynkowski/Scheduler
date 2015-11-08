@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,50 +21,50 @@ public class Slot implements Cloneable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	public Integer id;
+	Integer id;
 
 	@JsonIgnore
 	@ManyToOne(targetEntity=Schedule.class)    
 	@JoinColumn(name="schedule_id")
-	public Schedule schedule; 
+	Schedule schedule; 
 
 	@Column
-	public Integer classNumber;
+	Integer classNumber;
 	
 	@Column
-	public Integer day;
+	Integer day;
 
 	@Column
-	public Integer hour;
+	Integer hour;
 
 	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
 	@JoinColumn(name="students_id")
-	public Resource students;
+	Resource students;
 
 	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
 	@JoinColumn(name="teacher_id")
-	public Resource teacher;
+	Resource teacher;
 
 	@OneToOne (targetEntity=Subject.class, cascade=CascadeType.ALL)
 	@JoinColumn(name="subject_id")
-	public Subject subject;
+	Subject subject;
 
 	@OneToOne (targetEntity=Resource.class, cascade=CascadeType.ALL)
 	@JoinColumn(name="room_id")
-	public Resource room;
+	Resource room;
 
 	@Column
-	public Integer duration;
+	Integer duration;
 	
 	@Column
-	public Boolean isFixed;
+	Boolean fixed;
 
-	public Boolean getIsFixed() {
-		return isFixed;
+	public Boolean isFixed() {
+		return this.fixed;
 	}
 
-	public void setIsFixed(Boolean isFixed) {
-		this.isFixed = isFixed;
+	public void setFixed(Boolean fixed) {
+		this.fixed = fixed;
 	}
 
 	@Transient
@@ -89,7 +88,7 @@ public class Slot implements Cloneable{
 
 	public Slot(Schedule schedule, Integer classNumber,
 			Integer day, Integer hour, Resource students, Resource teacher,
-			Subject subject, Resource room, Integer duration, Boolean isFixed,
+			Subject subject, Resource room, Integer duration, Boolean fixed,
 			List<Resource> rooms) {
 		super();
 		this.schedule = schedule;
@@ -101,7 +100,7 @@ public class Slot implements Cloneable{
 		this.subject = subject;
 		this.room = room;
 		this.duration = duration;
-		this.isFixed = isFixed;
+		this.fixed = fixed;
 		this.rooms = rooms;
 	}
 
@@ -197,7 +196,18 @@ public class Slot implements Cloneable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((classNumber == null) ? 0 : classNumber.hashCode());
+		result = prime * result + ((day == null) ? 0 : day.hashCode());
+		result = prime * result
+				+ ((duration == null) ? 0 : duration.hashCode());
+		result = prime * result + ((hour == null) ? 0 : hour.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((fixed == null) ? 0 : fixed.hashCode());
 		result = prime * result + ((room == null) ? 0 : room.hashCode());
+		result = prime * result + ((rooms == null) ? 0 : rooms.hashCode());
+		result = prime * result
+				+ ((schedule == null) ? 0 : schedule.hashCode());
 		result = prime * result
 				+ ((students == null) ? 0 : students.hashCode());
 		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
@@ -214,10 +224,50 @@ public class Slot implements Cloneable{
 		if (getClass() != obj.getClass())
 			return false;
 		Slot other = (Slot) obj;
+		if (classNumber == null) {
+			if (other.classNumber != null)
+				return false;
+		} else if (!classNumber.equals(other.classNumber))
+			return false;
+		if (day == null) {
+			if (other.day != null)
+				return false;
+		} else if (!day.equals(other.day))
+			return false;
+		if (duration == null) {
+			if (other.duration != null)
+				return false;
+		} else if (!duration.equals(other.duration))
+			return false;
+		if (hour == null) {
+			if (other.hour != null)
+				return false;
+		} else if (!hour.equals(other.hour))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (fixed == null) {
+			if (other.fixed != null)
+				return false;
+		} else if (!fixed.equals(other.fixed))
+			return false;
 		if (room == null) {
 			if (other.room != null)
 				return false;
 		} else if (!room.equals(other.room))
+			return false;
+		if (rooms == null) {
+			if (other.rooms != null)
+				return false;
+		} else if (!rooms.equals(other.rooms))
+			return false;
+		if (schedule == null) {
+			if (other.schedule != null)
+				return false;
+		} else if (!schedule.equals(other.schedule))
 			return false;
 		if (students == null) {
 			if (other.students != null)
@@ -235,7 +285,7 @@ public class Slot implements Cloneable{
 		} else if (!teacher.equals(other.teacher))
 			return false;
 		return true;
-	}	
+	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -245,7 +295,7 @@ public class Slot implements Cloneable{
 		if (this.rooms != null) {
 			rooms.addAll(this.rooms);
 		}
-		clone.setIsFixed(this.getIsFixed());
+		clone.setFixed(this.fixed);
 		clone.setClassNumber(this.getClassNumber());
 		clone.setRooms(rooms);
 		clone.setSchedule(this.schedule);
@@ -278,7 +328,5 @@ public class Slot implements Cloneable{
 		
 		return subjectName + "\n" + studentsName + "\n"
 				+ teacherName + "\n" + roomName;
-		/*return classNumber + " " + subjectName + " " + studentsName + " "
-		+ teacherName + " " + roomName + " " + day + " " + hour;*/
 	}	
 }

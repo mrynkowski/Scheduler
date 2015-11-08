@@ -142,11 +142,8 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public void createResource(Integer id, Resource resource) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-		
-		if(getResourceByName(id, resource.name) == null) {
-			resource.setSchedule(schedule);
-			em.persist(resource);
-		}
+		resource.setSchedule(schedule);
+		em.persist(resource);
 	}
 
 	@Override
@@ -195,7 +192,7 @@ public class AppRepoImpl implements AppRepo{
 	public void createSubject(Integer id, Subject subject) {
 		Schedule schedule = em.getReference(Schedule.class, id);
 		
-		if(findSubjectByName(id, subject.name) == null) {
+		if(findSubjectByName(id, subject.getName()) == null) {
 			subject.setSchedule(schedule);
 			em.persist(subject);
 		}

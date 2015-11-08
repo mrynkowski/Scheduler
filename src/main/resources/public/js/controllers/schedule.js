@@ -149,7 +149,6 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 					$scope.fetchSlots();
 					$scope.slotAlert = false;
 					$('#slotModal').modal('hide');
-					$scope.slot = {}
 				});
 		} else {
 			$scope.slotAlert = true;
@@ -180,7 +179,6 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 		}
 	};
 	
-	$scope.fetchSchedule();
 	
 	var orderBy = $filter('orderBy');
 

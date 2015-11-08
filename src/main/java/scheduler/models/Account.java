@@ -8,13 +8,12 @@ import javax.persistence.Id;
 public class Account {
 	
     @Id @GeneratedValue
-    private Long id;
-    private String name;
-    private String password;
+    Long id;
+    String name;
+    String password;
 
     public Account() {
 		super();
-		
 	}
 
 	public Account(Long id, String name, String password) {
