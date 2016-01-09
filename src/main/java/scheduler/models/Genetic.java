@@ -3,6 +3,7 @@ package scheduler.models;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,7 +24,7 @@ public class Genetic {
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
 		population = new ArrayList<Schedule>();
-		population.add(schedule);	
+		population.add(schedule);
 	}
 
 	public List<Schedule> getPopulation() {
@@ -50,49 +51,54 @@ public class Genetic {
 		}
 		for (Slot slot : schedule.slots) {
 			if (!slot.fixed) {
-				setDayAndHour(slot, schedule);	
+				setDayAndHour(slot, schedule);
 			}
 		}
 	}
-	
+
 	public void setDayAndHour(Slot slot, Schedule s) {
-		
+
 		ArrayList<ArrayList<Boolean>> grid = new ArrayList<ArrayList<Boolean>>();
-				
+
 		boolean write = false;
 		while (!write) {
 			int day = (int) (Math.random() * s.days);
-			int hour = (int) (Math.random() * s.hours) ;
-			
-				Resource room = slot.rooms.get((int) (Math.random() * slot.rooms.size()));
-				int i = 0;
-				boolean good = true;
-				while (i < s.slots.size() && good) {
-					for (int h = 0; h < slot.duration; h++) {
-						good = good && isFree(day, hour + h, slot, room, s);
-						good = good && (hour + slot.duration <= s.hours);
-					}
-					i++;
+			int hour = (int) (Math.random() * s.hours);
+
+			Resource room = slot.rooms.get((int) (Math.random() * slot.rooms
+					.size()));
+			int i = 0;
+			boolean good = true;
+			while (i < s.slots.size() && good) {
+				for (int h = 0; h < slot.duration; h++) {
+					good = good && isFree(day, hour + h, slot, room, s);
+					good = good && (hour + slot.duration <= s.hours);
 				}
-				
-				if (good == true) {
-					write = true;
-					int j = 0;
-					for (Slot sl : s.slots) {
-						if (slot.students.equals(sl.students)  && slot.teacher.equals(sl.teacher) && slot.subject.equals(sl.subject)
-								&& slot.classNumber.equals(sl.classNumber)) {
-							sl.day = day;
-							sl.hour = hour + j;
-							sl.room = room;
-							j++;
-						}
+				i++;
+			}
+
+			if (good == true) {
+				write = true;
+				int j = 0;
+				for (Slot sl : s.slots) {
+					if (slot.students.equals(sl.students)
+							&& slot.teacher.equals(sl.teacher)
+							&& slot.subject.equals(sl.subject)
+							&& slot.classNumber.equals(sl.classNumber)) {
+						sl.day = day;
+						sl.hour = hour + j;
+						sl.room = room;
+						j++;
 					}
 				}
+			}
 		}
 	}
 
-	public Schedule mutation(Schedule mutatedSchedule) throws CloneNotSupportedException {
-		Slot removed = (Slot) mutatedSchedule.slots.get((int) (Math.random() * mutatedSchedule.slots.size()));
+	public Schedule mutation(Schedule mutatedSchedule)
+			throws CloneNotSupportedException {
+		Slot removed = (Slot) mutatedSchedule.slots
+				.get((int) (Math.random() * mutatedSchedule.slots.size()));
 
 		for (Slot slot : mutatedSchedule.slots) {
 			if (!slot.fixed) {
@@ -110,61 +116,56 @@ public class Genetic {
 		if (!removed.fixed) {
 			setDayAndHour(removed, mutatedSchedule);
 		}
-		
+
 		return mutatedSchedule;
 	}
-	
-	public void crossover(Schedule daddy, Schedule mommy) throws CloneNotSupportedException {		
+
+	public void crossover(Schedule daddy, Schedule mommy)
+			throws CloneNotSupportedException {
 		Set<Integer> conflictsSet = conflicts(daddy, mommy);
-		
+
 		sortSlotsByClassNumber(daddy.slots);
 		sortSlotsByClassNumber(mommy.slots);
-		
+
 		Schedule boy = (Schedule) daddy.clone();
 		Schedule girl = (Schedule) mommy.clone();
-		
-		for(int i = 0; i < boy.slots.size(); i++) {
+
+		for (int i = 0; i < boy.slots.size(); i++) {
 			if (!boy.slots.get(i).fixed) {
-				
+
 				if (!conflictsSet.contains(boy.slots.get(i).getClassNumber())) {
 					int duration = boy.slots.get(i).getDuration();
-					
+
 					if (Math.random() < 0.5) {
-						for (int j = 0; j < duration-1; j++) {
-							if (i+j == 10) {
-								System.out.println("break");
-							}
-							boy.slots.set(i+j, mommy.slots.get(i+j));	
+						for (int j = 0; j < duration - 1; j++) {
+							boy.slots.set(i + j, mommy.slots.get(i + j));
 						}
 					}
-					i = i + duration-1;
+					i = i + duration - 1;
 				}
 			}
 		}
-		
-		for(int i = 0; i < girl.slots.size(); i++) {
+
+		for (int i = 0; i < girl.slots.size(); i++) {
 			if (!girl.slots.get(i).fixed) {
-				
-				if(!conflictsSet.contains(girl.slots.get(i).getClassNumber())) {
+
+				if (!conflictsSet.contains(girl.slots.get(i).getClassNumber())) {
 					int duration = boy.slots.get(i).getDuration();
-					
+
 					if (Math.random() < 0.5) {
-						for (int j = 0; j < duration-1; j++) {
-							if (i+j == 10) {
-								System.out.println("break");
-							}
-							girl.slots.set(i+j, daddy.slots.get(i+j));						
+						for (int j = 0; j < duration - 1; j++) {
+							girl.slots.set(i + j, daddy.slots.get(i + j));
 						}
-					}		
-					i = i + duration-1;
+					}
+					i = i + duration - 1;
 				}
 			}
 		}
-		
+
 		population.add(boy);
 		population.add(girl);
 	}
-	
+
 	public void sortSlotsByClassNumber(List<Slot> slots) {
 		Collections.sort(slots, new Comparator<Slot>() {
 			@Override
@@ -175,94 +176,148 @@ public class Genetic {
 			}
 		});
 	}
-	
+
 	public Set<Integer> conflicts(Schedule daddy, Schedule mommy) {
 		Set<Integer> conflictsSet = new TreeSet<Integer>();
-		
+
 		for (Slot daddySlot : daddy.slots) {
 			if (!daddySlot.fixed) {
 				for (Slot mommySlot : mommy.slots) {
-					if (mommySlot.day == daddySlot.day && mommySlot.hour == daddySlot.hour) {
+					if (mommySlot.day == daddySlot.day
+							&& mommySlot.hour == daddySlot.hour) {
 
-						if (daddySlot.students.equals(mommySlot.students) || daddySlot.teacher.equals(mommySlot.teacher) || daddySlot.room.equals(mommySlot.room)) {
+						if (daddySlot.students.equals(mommySlot.students)
+								|| daddySlot.teacher.equals(mommySlot.teacher)
+								|| daddySlot.room.equals(mommySlot.room)) {
 							conflictsSet.add(daddySlot.classNumber);
 							conflictsSet.add(mommySlot.classNumber);
 						}
 					}
-				}				
-			}
-		}
-		
-		return conflictsSet;
-	}
-	
-	public Schedule optimize() throws CloneNotSupportedException {
-		if (this.schedule.slots.size() > 0) {
-		this.schedule.rates = new ArrayList<Double>();
-		System.out.println("Init: 0");
-		init(this.schedule);
-		for (int i = 1; i < this.schedule.populationSize; i++) {
-			System.out.println("Init: " + i);
-			Schedule clone = (Schedule) schedule.clone();
-			init(clone);
-			population.add(clone);
-		}
-
-		for (Schedule s : population) {
-			s.rate = rateSchedule(s);
-		}
-			
-		sortByRate(population);
-		
-		for (int i = 0; i < this.schedule.iterations; i++) {
-			
-			System.out.println("i: " + i);
-			
-			int numberOfCrossovers = (int) (population.size()*0.1);
-			
-			for (int j = 0; j < numberOfCrossovers; j++) {
-				double crossoverRandom = Math.random();
-				
-				if (crossoverRandom < this.schedule.crossoverProbability) {
-					int mommyRandom = (int)(Math.random()*population.size()*0.1);
-					int daddyRandom = (int)(Math.random()*population.size()*0.1);
-					Schedule mommy = population.get(mommyRandom);
-					Schedule daddy = population.get(daddyRandom);
-					crossover(daddy, mommy);
 				}
 			}
-					
-			for (int j = 0; j < population.size(); j++) {
-				double mutationRandom = Math.random();
-				if (mutationRandom < this.schedule.mutationProbability) {					
-					Schedule clone = (Schedule) population.get(j).clone();
-					population.remove(j);
-					mutation(clone);
+		}
+
+		return conflictsSet;
+	}
+
+	public Schedule optimize() throws CloneNotSupportedException {
+		if (this.schedule.slots.size() > 0) {
+			this.schedule.rates = new ArrayList<Rate>();
+			System.out.println("Init population: 0");
+			init(this.schedule);
+
+			System.out.println(this.schedule.algorithm);
+
+			if (("ga").equals(this.schedule.algorithm)) {
+				for (int i = 1; i < this.schedule.populationSize; i++) {
+					if (i % 10 == 0) {
+						System.out.println("Init population: " + i);
+					}
+
+					Schedule clone = (Schedule) schedule.clone();
+					init(clone);
 					population.add(clone);
-									
-				}				
+				}
 			}
-			
+
 			for (Schedule s : population) {
 				s.rate = rateSchedule(s);
 			}
-					
-			sortByRate(population);
-			
-			if (population.size() > this.schedule.populationSize) {
-				for (int j = population.size()-1; j >= this.schedule.populationSize; j--) {
-					population.remove(j);
-				}
-			}
-			
-			this.schedule.rates.add(population.get(0).rate);
 
-		}
-		System.out.println(population.size());
-		return population.get(0);
+			sortByRate(population);
+
+			for (int i = 0; i < this.schedule.iterations; i++) {
+
+				if (i % 10 == 0) {
+					System.out.println("Iteration: " + i);
+				}
+
+				if (("ga").equals(this.schedule.algorithm)) {
+					int numberOfCrossovers = (int) (population.size() * 0.1);
+
+					for (int j = 0; j < numberOfCrossovers; j++) {
+						double crossoverRandom = Math.random();
+
+						if (crossoverRandom < this.schedule.crossoverProbability) {
+							int mommyRandom = (int) (Math.random()
+									* population.size() * 0.1);
+							int daddyRandom = (int) (Math.random()
+									* population.size() * 0.1);
+							Schedule mommy = population.get(mommyRandom);
+							Schedule daddy = population.get(daddyRandom);
+							crossover(daddy, mommy);
+						}
+					}
+
+					int num = population.size();
+					for (int j = 0; j < num; j++) {
+						double numberOfmutations = Math.random()
+								* num;
+						Schedule clone = null;
+						for (int a = 0; a < numberOfmutations; a++) {
+							double mutationRandom = Math.random();
+							if (mutationRandom < this.schedule.mutationProbability) {
+								clone = (Schedule) population.get(j).clone();
+								mutation(clone);
+								population.add(clone);
+								population.remove(j);
+							}
+						}
+					}
+				} else {
+					Schedule clone = null;
+
+					//for (int a = 0; a < population.get(0).numberOfClasses; a++) {
+						double annealingRandom = Math.random();
+						if (annealingRandom < this.schedule.mutationProbability) {
+							clone = (Schedule) population.get(0).clone();
+							mutation(clone);
+							population.add(clone);
+						}
+					//}
+
+					// // simmulated annealing 2
+					// Schedule clone = (Schedule) population.get(0).clone();
+					// mutation(clone);
+					// population.add(clone);
+				}
+
+				for (Schedule s : population) {
+					s.rate = rateSchedule(s);
+				}
+
+				sortByRate(population);
+
+				if (population.size() > this.schedule.populationSize) {
+					for (int j = population.size() - 1; j >= this.schedule.populationSize; j--) {
+						population.remove(j);
+					}
+				}
+
+				Rate rate = new Rate();
+				rate.best = population.get(0).rate;
+				rate.average = getAverage(population);
+				rate.setSchedule(this.schedule);
+				this.schedule.rates.add(rate);
+			}
+
+			population.get(0).setRates(this.schedule.rates);
+			return population.get(0);
 		} else {
 			return this.schedule;
 		}
+	}
+
+	private Double getAverage(List<Schedule> population) {
+		Double sum = 0.0;
+
+		for (Schedule schedule : population) {
+			sum = sum + schedule.rate;
+		}
+
+		Double average = sum / population.size();
+
+		return average;
 	}
 
 	public void sortByRate(List<Schedule> p) {
@@ -278,7 +333,9 @@ public class Genetic {
 			Schedule s) {
 		for (Slot slot : s.slots) {
 			if (slot.day == day && slot.hour == hour) {
-				if (match.students.equals(slot.students) || match.teacher.equals(slot.teacher) || room.equals(slot.room)) {
+				if (match.students.equals(slot.students)
+						|| match.teacher.equals(slot.teacher)
+						|| room.equals(slot.room)) {
 					return false;
 				}
 			}
@@ -288,16 +345,19 @@ public class Genetic {
 
 	public double rateSchedule(Schedule schedule) {
 		this.schedule.rate = 0.0;
-		
+
 		for (Resource res : schedule.resources) {
-			
-			if (res.getType().equals("students") || res.getType().equals("teacher")) {
+
+			if (res.getType().equals("students")
+					|| res.getType().equals("teacher")) {
 
 				for (int i = 0; i < schedule.days; i++) {
 					List<Slot> day = new ArrayList<Slot>();
-					
+
 					for (Slot slot : schedule.slots) {
-						if (slot.day == i && (res.equals(slot.students) || res.equals(slot.teacher))) {
+						if (slot.day == i
+								&& (res.equals(slot.students) || res
+										.equals(slot.teacher))) {
 							day.add(slot);
 						}
 					}
@@ -309,8 +369,8 @@ public class Genetic {
 		return this.schedule.rate;
 	}
 
-	public double rateDay(List<Slot> day){
-		
+	public double rateDay(List<Slot> day) {
+
 		Collections.sort(day, new Comparator<Slot>() {
 			@Override
 			public int compare(Slot o1, Slot o2) {
@@ -318,7 +378,7 @@ public class Genetic {
 				return c;
 			}
 		});
-		
+
 		int freeSlots = 0;
 		double output = 0;
 		if (day.size() > 1) {
@@ -329,29 +389,34 @@ public class Genetic {
 			}
 			output = output + rateFreeSlots(freeSlots);
 		}
-		
+
 		output = output + rateLessonsNumber(day.size());
-		
+
 		return output;
 	}
-	
+
 	public double rateLessonsNumber(int lessons) {
 		if (lessons == this.schedule.hours0) {
 			return 0;
-		} else if(lessons > 0 && lessons <= this.schedule.hoursA){
+		} else if (lessons > 0 && lessons <= this.schedule.hoursA) {
 			return 1;
-		} else if (lessons > this.schedule.hoursA && lessons <= this.schedule.hoursB) {
-			return (this.schedule.hoursB - lessons) / (this.schedule.hoursB - this.schedule.hoursA);
-		} else if (this.schedule.hoursB < lessons && lessons <= this.schedule.hoursC) {
+		} else if (lessons > this.schedule.hoursA
+				&& lessons <= this.schedule.hoursB) {
+			return (this.schedule.hoursB - lessons)
+					/ (this.schedule.hoursB - this.schedule.hoursA);
+		} else if (this.schedule.hoursB < lessons
+				&& lessons <= this.schedule.hoursC) {
 			return 0;
-		} else if (this.schedule.hoursC < lessons && lessons <= this.schedule.hoursD) {
-			return (lessons - this.schedule.hoursC) / (this.schedule.hoursD - this.schedule.hoursC);
+		} else if (this.schedule.hoursC < lessons
+				&& lessons <= this.schedule.hoursD) {
+			return (lessons - this.schedule.hoursC)
+					/ (this.schedule.hoursD - this.schedule.hoursC);
 		} else {
 			return 1;
 		}
 	}
 
 	public double rateFreeSlots(int lessons) {
-		return this.schedule.freeA*lessons + this.schedule.freeB;
+		return this.schedule.freeA * lessons + this.schedule.freeB;
 	}
 }

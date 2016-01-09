@@ -326,7 +326,7 @@ public class Slot implements Cloneable{
 			roomName = this.room.getName();
 		}
 		
-		return subjectName + "\n" + studentsName + "\n"
-				+ teacherName + "\n" + roomName;
+		return subjectName + " " + studentsName + " "
+				+ teacherName + " " + roomName;
 	}	
 }

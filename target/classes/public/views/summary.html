@@ -1,7 +1,11 @@
 <div class="toolbar col-sm-12" data-ng-init="fetchSchedule()">
-	<button type="button"
-		class="btn btn-primary run btn-medium" ng-click="generate(params)">	<span ng-show="generating" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Generate</button>
-			<!-- 
+	<button type="button" class="btn btn-primary run btn-medium"
+		ng-click="generate(params)">
+		<span ng-show="generating"
+			class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+		Generate
+	</button>
+	<!-- 
 	<input
 		ng-show="!parameters" type="button"
 		class="btn btn-primary btn-medium" value="Parameters"
@@ -13,9 +17,10 @@
 		class="btn btn-primary btn-medium" value="Cancel"
 		ng-click="hideParameters()">
 	</input>
-	-->	
+	-->
 	<input type="button" class="btn btn-danger new btn-medium"
 		data-toggle="modal" data-target="#deleteModal" value="Delete">
+
 	<div class="modal" id="deleteModal" tabindex="-1" role="dialog"
 		aria-labelledby="basicModal" aria-hidden="true">
 		<div class="modal-dialog">
@@ -35,6 +40,12 @@
 	</div>
 </div>
 <div class="col-sm-12">
+	<label class="radio-inline"><input type="radio" name="optradio"
+		ng-model="params.algorithm" value="ga">Genetic Algorithm</label> <label
+		class="radio-inline"><input type="radio" name="optradio"
+		ng-model="params.algorithm" value="sa">Simulated Annealing</label>
+</div>
+<div class="col-sm-12">
 	<label class="toolbar_text">Schedule: {{schedule.name}}</label>
 	<div>
 		<p class="lead">Rate: {{schedule.rate}}</p>
@@ -42,95 +53,110 @@
 	</div>
 </div>
 <div ng-show="parameters">
-<div class="col-sm-12">
-	<p class="lead">General parameters:</p>
+	<div class="col-sm-12">
+		<p class="lead">General parameters:</p>
 		<form class="form-horizontal">
-			<div class="form-group">				
-			 	<label class="col-sm-1 control-label">Days:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control " name="quantity" min="1" max="5" ng-model="params.days">
-			 	</div>
-			</div> 	
-			<div class="form-group">				
-			 	<label class="col-sm-1 control-label">Hours:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control" name="quantity" min="1" max="15" ng-model="params.hours">
-			 	</div>
-			</div>
-			<div class="form-group">	 	
-			 	<label class="col-sm-1 control-label">Population:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control" name="quantity" min="1" ng-model="params.populationSize">
-			 	</div>
-			</div> 	
 			<div class="form-group">
-			 	<label class="col-sm-1 control-label">Iterations:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control" name="quantity" min="1" ng-model="params.iterations">
-			 	</div>			 				 				 	
+				<label class="col-sm-2 control-label">Days:</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control " name="quantity" min="1"
+						max="5" ng-model="params.days">
+				</div>
 			</div>
-			<div class="form-group">	 	
-			 	<label class="col-sm-1 control-label">Crossover probability:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control" name="quantity" min="0" max="1" step="0.01" ng-model="params.crossoverProbability">
-			 	</div>
-			</div> 	
 			<div class="form-group">
-			 	<label class="col-sm-1 control-label">Mutation probability:</label>
-			 	<div class="col-sm-2">
-			 		<input type="number" class="form-control" name="quantity" min="0" max="1" step="0.01" ng-model="params.mutationProbability">
-			 	</div>			 				 				 	
-			</div>			
+				<label class="col-sm-2 control-label">Hours:</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control" name="quantity" min="1"
+						max="15" ng-model="params.hours">
+				</div>
+			</div>
+			<div class="form-group">
+				<label ng-if="params.algorithm == 'ga'" class="col-sm-2 control-label">Population:</label>
+				<label ng-if="params.algorithm == 'sa'" class="col-sm-2 control-label">Memory</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control" name="quantity" min="1"
+						min="1000" ng-model="params.populationSize">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Iterations:</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control" name="quantity" min="1"
+						ng-model="params.iterations">
+				</div>
+			</div>
+			<div ng-if="params.algorithm == 'ga'" class="form-group">
+				<label class="col-sm-2 control-label">Crossover probability:</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control" name="quantity" min="0"
+						max="1" step="0.01" ng-model="params.crossoverProbability">
+				</div>
+			</div>
+			<div class="form-group">
+			
+				<label ng-if="params.algorithm == 'ga'" class="col-sm-2 control-label">Mutation probability:</label>
+				<label ng-if="params.algorithm == 'sa'" class="col-sm-2 control-label">Annealing probability:</label>
+				<div class="col-sm-2">
+					<input type="number" class="form-control" name="quantity" min="0"
+						max="1" step="0.01" ng-model="params.mutationProbability">
+				</div>
+			</div>
 		</form>
-</div>	
-<div class="col-sm-12">
-	<div class="col-sm-6">
-	<p class="lead">Hours per day penalty function:</p>
-		<svg id="hours"></svg>
-		<form class="form-horizontal">		
-		<div class="form-group">
-			<label class="control-label col-sm-2">A:</label>
-			<div class="col-sm-4">
-				<input type="number" class="form-control" ng-model="params.hoursA" ng-change="hours()">
-			</div>
+	</div>
+	<div class="col-sm-12">
+		<div class="col-sm-6">
+			<p class="lead">Hours per day penalty function:</p>
+			<svg id="hours"></svg>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-2">A:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" ng-model="params.hoursA"
+							ng-change="hours()">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2">B:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" ng-model="params.hoursB"
+							ng-change="hours()">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2">C:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" ng-model="params.hoursC"
+							ng-change="hours()">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2">D:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" min="1" max="15"
+							ng-model="params.hoursD" ng-change="hours()">
+					</div>
+				</div>
+			</form>
 		</div>
-		<div class="form-group">
-			<label class="control-label col-sm-2">B:</label>
-			<div class="col-sm-4">
-				<input type="number" class="form-control" ng-model="params.hoursB" ng-change="hours()">
-			</div>
-		</div>	
-		<div class="form-group">
-			<label class="control-label col-sm-2">C:</label>
-			<div class="col-sm-4">
-				<input type="number" class="form-control" ng-model="params.hoursC" ng-change="hours()">
-			</div>
-		</div>	
-		<div class="form-group">
-			<label class="control-label col-sm-2">D:</label>
-			<div class="col-sm-4">
-				<input type="number" class="form-control" min="1" max="15" ng-model="params.hoursD" ng-change="hours()">
-			</div>
-		</div>		
-		</form>
+		<div class="col-sm-6">
+			<p class="lead">Holes per day penalty function</p>
+			<svg id="free"></svg>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-2">a:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" ng-model="params.freeA"
+							ng-change="free()" step="0.1" min="0.1">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2">b:</label>
+					<div class="col-sm-4">
+						<input type="number" class="form-control" ng-model="params.freeB"
+							ng-change="free()" step="0.1" min="0">
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
-	<div class="col-sm-6">
-		<p class="lead">Holes per day penalty function:</p>
-		<svg id="free"></svg>
-		<form class="form-horizontal">
-			<div class="form-group">
-				<label class="control-label col-sm-2">A:</label>
-				<div class="col-sm-4">
-					<input type="number" class="form-control" ng-model="params.freeA" ng-change="free()" step="0.5">
-				</div>							
-			</div>	
-			<div class="form-group">
-				<label class="control-label col-sm-2">B:</label>
-				<div class="col-sm-4">
-					<input type="number" class="form-control" ng-model="params.freeB" ng-change="free()" step="1">
-				</div>	
-			</div>	
-		</form>
-	</div>
-</div>
 </div>

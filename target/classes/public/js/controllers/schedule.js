@@ -130,6 +130,8 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			$scope.params.populationSize = data.populationSize;
 			$scope.params.iterations = data.iterations;
 
+			$scope.params.algorithm = data.algorithm;
+			
 			$scope.hours();
 			$scope.chart();
 			$scope.free();
@@ -146,6 +148,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 			}
 			var slotToSave = slot;
 				$http.post('/rest/'+ $rootScope.accountId +'/schedules/' + id + '/slots', slot).success(function() {
+					$scope.slot = {};
 					$scope.fetchSlots();
 					$scope.slotAlert = false;
 					$('#slotModal').modal('hide');
@@ -221,81 +224,81 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.fetchResources();
 	$scope.fetchSubjects();
 	$scope.fetchSlots();
-	
-	$scope.drawChart = function(){
-		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){
-			$scope.rates = data;
-			$('#div_report').empty();
-			var xy = [[]];
-			
-			for (i = 0; i < $scope.rates.length; ++i) {
-				xy[i] = [i, $scope.rates[i]];
-			}
-			
-			$.jqplot('div_report', [ xy ], {
-				axes : {
-					xaxis : {
-						min : 0,
-						max : $scope.rates.length-1
-					},
-					yaxis : {
-						min : 0,
-						max : 30
-					}
-				},
-				
-				grid: {
-				        background: '#FFFFFF'
-				}, 
-				
-				seriesDefaults: {
-					showMarker: false
-				}
-
-			});
-		});
-	};
-	
+		
 	$scope.chart = function() {
 		$('#graph').empty();
 		$http.get('/rest/'+ $rootScope.accountId +'/schedules/'+ id + '/rates').success(function(data){
 		
-	
-					var m = [ 10, 30, 30, 30 ];
-					var w = parseInt(d3.select("#graph").style("width")) - m[1] - m[3];		
-					var h = 400 - m[0] - m[2];
-
-					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
-					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+			var m = [ 30, 30, 40, 30 ];
+			var w = parseInt(d3.select("#graph").style("width")) - m[1] - m[3];		
+			var h = 400 - m[0] - m[2];
+			
+			if (data.length > 0) {
+					var xScale = d3.scale.linear().domain([0, data.length-1]).range([0, w]);
+					var yScale = d3.scale.linear().domain([0, data[0].best]).range([h, 0]);
 					var line = d3.svg.line()
 
 					.x(function(d,i) { 
-						return x(i); 
+						return xScale(i); 
 					})
 					.y(function(d) { 
-						return y(d); 
+						return yScale(d.best); 
 					})
 
 					var graph = d3.select("#graph").append("svg:svg").attr("width", w + m[1] + m[3]).attr("height",
 							h + m[0] + m[2]).append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
-					var xAxis = d3.svg.axis().scale(x).orient("bottom").innerTickSize(-h).outerTickSize(0).tickPadding(10);
+					var xAxis = d3.svg.axis().scale(xScale).orient("bottom").innerTickSize(-h).outerTickSize(0).tickPadding(10);
 
 					graph.append("svg:g").attr("class", "x axis").attr("transform", "translate(0," + h + ")").call(xAxis);
 
-					var yAxis = d3.svg.axis().scale(y).innerTickSize(-w).outerTickSize(0).tickPadding(10).orient("left");
+					var yAxis = d3.svg.axis().scale(yScale).innerTickSize(-w).outerTickSize(0).tickPadding(10).orient("left");
 
 					graph.append("svg:g").attr("class", "y axis").call(yAxis);
 
 					graph.append("svg:path").attr("class", "line").attr("d",
 							line(data));
-				});
+					
+// line = d3.svg.line()
+//
+// .x(function(d,i) {
+// return xScale(i);
+// })
+// .y(function(d) {
+// return yScale(d.average);
+// })
+//					
+// graph.append("svg:path").attr("class", "line")
+// .attr('stroke', 'black')
+// .style("stroke-dasharray", ("3, 3"))
+// .attr("d", line(data));
+					
+					graph.append("svg:text")
+					   .attr("x", m[0]-30)
+					   .attr("y", 0 - m[0]/2)
+					   .attr("text-anchor", "end")
+					   .text("rate");
+
+					graph.append("svg:text")
+					    .attr("x", w)
+					    .attr("y", h + m[0]+5)
+					    .attr("text-anchor", "end")
+					    .text("iteration");
+			} else {
+				var graph = d3.select("#graph").append("svg:svg").attr("width", w + m[1] + m[3]).attr("height",
+						h + m[0] + m[2]).append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+				
+				graph.append("svg:text")
+				   .attr("x", w/2 + 30)
+				   .attr("y", h/2)
+				   .attr("text-anchor", "end")
+				   .text("Not yet generated");
+			}
+		});
 	};
 	
-	function myFunction(lessons) {
-		if (lessons == $scope.params.hours0) {
-			return 0;
-		} else if(lessons > 0 && lessons <= $scope.params.hoursA){
+	function trapez(lessons) {
+		if(lessons > 0 && lessons <= $scope.params.hoursA){
 			return 1;
 		} else if (lessons > $scope.params.hoursA && lessons <= $scope.params.hoursB) {
 			return ($scope.params.hoursB - lessons) / ($scope.params.hoursB - $scope.params.hoursA);
@@ -311,18 +314,18 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.hours = function() {
 		$('#hours').empty();
 
-					var lim = 10;
+					var lim = $scope.params.hours;
 					var data = [];
 					
-					for(var i = 0; i < lim; i = i + 0.1) {
-						data.push(myFunction(i));
+					for(var i = 0; i <= lim; i = i + 1) {
+						data.push(trapez(i));
 					}
 		
-					var m = [ 10, 40, 30, 60 ];
+					var m = [ 30, 30, 40, 30 ];
 					var w = parseInt(d3.select("#hours").style("width")) - m[1] - m[3];
 					var h = 300 - m[0] - m[2];
 
-					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
+					var x = d3.scale.linear().domain([0, data.length-1]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
 					var line = d3.svg.line()
 
@@ -347,6 +350,17 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 					graph.append("svg:path").attr("class", "line").attr("d",
 							line(data));
 				
+					graph.append("svg:text")
+					   .attr("x", m[0]-10)
+					   .attr("y", 0 - m[0]/2)
+					   .attr("text-anchor", "end")
+					   .text("penalty");
+
+					graph.append("svg:text")
+					    .attr("x", w)
+					    .attr("y", h + m[0]+5)
+					    .attr("text-anchor", "end")
+					    .text("time [h]");
 	};
 		
 	function freeValue(lessons) {
@@ -356,18 +370,18 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 	$scope.free = function() {
 		$('#free').empty();
 
-					var lim = 10;
+					var lim = $scope.params.hours;
 					var data = [];
 					
 					for(var i = 0; i < lim; i = i + 1) {
 						data.push(freeValue(i));
 					}
 					
-					var m = [ 10, 40, 30, 60 ];
+					var m = [ 30, 30, 40, 30 ];
 					var w = parseInt(d3.select("#free").style("width")) - m[1] - m[3];
 					var h = 300 - m[0] - m[2];
 
-					var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
+					var x = d3.scale.linear().domain([0, data.length-1]).range([0, w]);
 					var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
 					var line = d3.svg.line()
 
@@ -391,6 +405,18 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 
 					graph.append("svg:path").attr("class", "line").attr("d",
 							line(data));
+					
+					graph.append("svg:text")
+					   .attr("x", m[0]-10)
+					   .attr("y", 0 - m[0]/2)
+					   .attr("text-anchor", "end")
+					   .text("penalty");
+
+					graph.append("svg:text")
+					    .attr("x", w)
+					    .attr("y", h + m[0]+5)
+					    .attr("text-anchor", "end")
+					    .text("time [h]");
 				
 	};	
 });

@@ -17,7 +17,7 @@ import scheduler.models.Slot;
 import scheduler.models.Subject;
 
 @Repository
-public class AppRepoImpl implements AppRepo{
+public class AppRepoImpl implements AppRepo {
 
 	@Autowired
 	EntityManager em;
@@ -25,35 +25,37 @@ public class AppRepoImpl implements AppRepo{
 	@Transactional
 	public void saveSchedule(Schedule schedule) {
 		em.persist(schedule);
-	}	
-	
-    @Override
-    public Account findAccount(Long id) {
-        return em.find(Account.class, id);
-    }
+	}
 
 	@Override
-	public Schedule getSchedule(Integer id) {
+	public Account findAccount(Long id) {
+		return em.find(Account.class, id);
+	}
+
+	@Override
+	public Schedule findScheduleById(Integer id) {
 		Schedule s = em.find(Schedule.class, id);
 		return s;
 	}
 
 	@Override
 	public List<Schedule> getSchedulesByAccountId(Long id) {
-        Query query = em.createQuery("SELECT s from Schedule s where s.owner.id=?1");
-        query.setParameter(1, id);
-        return query.getResultList();
-	}
-	
-	@Override
-	public List<Schedule> getSchedulesByAccountName(String name) {
-        Query query = em.createQuery("SELECT s from Schedule s where s.owner.name=?1");
-        query.setParameter(1, name);
-        return query.getResultList();
+		Query query = em
+				.createQuery("SELECT s from Schedule s where s.owner.id=?1");
+		query.setParameter(1, id);
+		return query.getResultList();
 	}
 
 	@Override
-	public Object getResult(String query){
+	public List<Schedule> getSchedulesByAccountName(String name) {
+		Query query = em
+				.createQuery("SELECT s from Schedule s where s.owner.name=?1");
+		query.setParameter(1, name);
+		return query.getResultList();
+	}
+
+	@Override
+	public Object getResult(String query) {
 		return em.createQuery(query).getResultList();
 	}
 
@@ -62,7 +64,7 @@ public class AppRepoImpl implements AppRepo{
 		try {
 			em.persist(schedule);
 		} catch (Exception e) {
-			
+
 		}
 	}
 
@@ -73,10 +75,10 @@ public class AppRepoImpl implements AppRepo{
 			schedule.setOwner(account);
 			em.persist(schedule);
 		} catch (Exception e) {
-			
-		}	
+
+		}
 	}
-	
+
 	@Override
 	public Resource getResource(Integer id) {
 		Resource res = em.find(Resource.class, id);
@@ -90,14 +92,22 @@ public class AppRepoImpl implements AppRepo{
 		return schedule;
 	}
 
+	@Transactional
+	@Override
+	public void deleteRates(Schedule schedule) {
+		Query query = em.createQuery("DELETE FROM Rate r WHERE r.schedule=?1");
+		query.setParameter(1, schedule);
+		query.executeUpdate();
+	}
+
 	@Override
 	public List<Resource> getResourcesByType(Integer id, String type) {
 		Schedule s = em.find(Schedule.class, id);
-		
+
 		List<Resource> list = s.getResources();
 		List<Resource> output = new ArrayList<Resource>();
 		for (Resource res : list) {
-			if(res.getType().equals("room")){
+			if (res.getType().equals("room")) {
 				output.add(res);
 			}
 		}
@@ -122,7 +132,7 @@ public class AppRepoImpl implements AppRepo{
 	@Transactional
 	@Override
 	public void createSlotCopy(Integer id) throws CloneNotSupportedException {
-		Slot slot = em.find(Slot.class, id);		
+		Slot slot = em.find(Slot.class, id);
 		Slot clone = (Slot) slot.clone();
 		clone.setId(null);
 		em.persist(clone);
@@ -130,14 +140,15 @@ public class AppRepoImpl implements AppRepo{
 
 	@Transactional
 	@Override
-	public void createSlotCopy(Integer id, int i) throws CloneNotSupportedException {
-		Slot slot = em.find(Slot.class, id);		
+	public void createSlotCopy(Integer id, int i)
+			throws CloneNotSupportedException {
+		Slot slot = em.find(Slot.class, id);
 		Slot clone = (Slot) slot.clone();
 		clone.setId(null);
-		clone.setHour(clone.getHour()+i);
+		clone.setHour(clone.getHour() + i);
 		em.persist(clone);
 	}
-	
+
 	@Transactional
 	@Override
 	public void createResource(Integer id, Resource resource) {
@@ -149,41 +160,43 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public Resource getResourceByName(Integer id, String name) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-        Query query = em.createQuery("SELECT r FROM Resource r WHERE r.schedule=?1 AND r.name=?2");
-        query.setParameter(1, schedule);
-        query.setParameter(2, name);
-        List<Resource> resources = query.getResultList();
-        if(resources.size() == 0) {
-            return null;
-        } else {
-            return resources.get(0);
-        }
+		Query query = em
+				.createQuery("SELECT r FROM Resource r WHERE r.schedule=?1 AND r.name=?2");
+		query.setParameter(1, schedule);
+		query.setParameter(2, name);
+		List<Resource> resources = query.getResultList();
+		if (resources.size() == 0) {
+			return null;
+		} else {
+			return resources.get(0);
+		}
 	}
-	
+
 	@Transactional
 	@Override
 	public void deleteSlotsWithClassNumber(Integer classNumber) {
-		Query query = em.createQuery("DELETE FROM Slot s WHERE s.classNumber=?1");
+		Query query = em
+				.createQuery("DELETE FROM Slot s WHERE s.classNumber=?1");
 		query.setParameter(1, classNumber);
 		query.executeUpdate();
 	}
 
 	@Override
 	public Account findByAccountName(String name) {
-        Query query = em.createQuery("SELECT a FROM Account a WHERE a.name=?1");
-        query.setParameter(1, name);
-        List<Account> accounts = query.getResultList();
-        if(accounts.size() == 0) {
-            return null;
-        } else {
-            return accounts.get(0);
-        }
+		Query query = em.createQuery("SELECT a FROM Account a WHERE a.name=?1");
+		query.setParameter(1, name);
+		List<Account> accounts = query.getResultList();
+		if (accounts.size() == 0) {
+			return null;
+		} else {
+			return accounts.get(0);
+		}
 	}
 
 	@Transactional
 	@Override
 	public void deleteResource(Integer id) {
-		Resource resource = em.find(Resource.class, id);	
+		Resource resource = em.find(Resource.class, id);
 		em.remove(resource);
 	}
 
@@ -191,8 +204,8 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public void createSubject(Integer id, Subject subject) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-		
-		if(findSubjectByName(id, subject.getName()) == null) {
+
+		if (findSubjectByName(id, subject.getName()) == null) {
 			subject.setSchedule(schedule);
 			em.persist(subject);
 		}
@@ -201,21 +214,22 @@ public class AppRepoImpl implements AppRepo{
 	@Override
 	public Subject findSubjectByName(Integer id, String name) {
 		Schedule schedule = em.getReference(Schedule.class, id);
-        Query query = em.createQuery("SELECT s FROM Subject s WHERE s.schedule=?1 AND s.name=?2");
-        query.setParameter(1, schedule);
-        query.setParameter(2, name);
-        List<Subject> subjects = query.getResultList();
-        if(subjects.size() == 0) {
-            return null;
-        } else {
-            return subjects.get(0);
-        }
+		Query query = em
+				.createQuery("SELECT s FROM Subject s WHERE s.schedule=?1 AND s.name=?2");
+		query.setParameter(1, schedule);
+		query.setParameter(2, name);
+		List<Subject> subjects = query.getResultList();
+		if (subjects.size() == 0) {
+			return null;
+		} else {
+			return subjects.get(0);
+		}
 	}
-	
+
 	@Transactional
 	@Override
 	public void deleteSubject(Integer subjectId) {
-		Subject subject = em.find(Subject.class, subjectId);	
+		Subject subject = em.find(Subject.class, subjectId);
 		em.remove(subject);
 	}
 

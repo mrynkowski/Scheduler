@@ -18,27 +18,31 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Schedule implements Cloneable{
+public class Schedule implements Cloneable {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	Integer id;
 
-    @ManyToOne(targetEntity=Account.class)    
-	@JoinColumn(name="account_id")
-    Account owner;
-	
+	@ManyToOne(targetEntity = Account.class)
+	@JoinColumn(name = "account_id")
+	Account owner;
+
 	@JsonIgnore
-	@OneToMany(orphanRemoval=true, targetEntity=Resource.class, cascade = CascadeType.ALL, mappedBy = "schedule")
+	@OneToMany(orphanRemoval = true, targetEntity = Resource.class, cascade = CascadeType.ALL, mappedBy = "schedule")
 	List<Resource> resources;
 
 	@JsonIgnore
-	@OneToMany(orphanRemoval=true, targetEntity=Subject.class, cascade = CascadeType.ALL, mappedBy = "schedule")
+	@OneToMany(orphanRemoval = true, targetEntity = Subject.class, cascade = CascadeType.ALL, mappedBy = "schedule")
 	List<Subject> subjects;
 
 	@JsonIgnore
-	@OneToMany(orphanRemoval=true, targetEntity=Slot.class, cascade = CascadeType.ALL, mappedBy = "schedule")
+	@OneToMany(orphanRemoval = true, targetEntity = Slot.class, cascade = CascadeType.ALL, mappedBy = "schedule")
 	List<Slot> slots;
+
+	@JsonIgnore
+	@OneToMany(targetEntity = Rate.class, cascade = CascadeType.ALL, mappedBy = "schedule")
+	List<Rate> rates;
 
 	@Column
 	Integer days;
@@ -54,45 +58,43 @@ public class Schedule implements Cloneable{
 
 	@Column
 	Integer populationSize;
-	
+
 	@Column
 	Integer iterations;
-	
+
 	@Column
 	Integer numberOfClasses;
-	
+
 	@Column
 	Double hoursA;
-	
+
 	@Column
 	Double hoursB;
-	
+
 	@Column
 	Double hoursC;
-	
+
 	@Column
 	Double hoursD;
-	
+
 	@Column
 	Double freeA;
-	
+
 	@Column
 	Double freeB;
-	
+
 	@Column
 	Double hours0;
-	
+
 	@Column
 	Double crossoverProbability;
-	
+
 	@Column
 	Double mutationProbability;
-	
-	@JsonIgnore
-	@ElementCollection
-	@CollectionTable(name="rates", joinColumns=@JoinColumn(name="schedule_id"))
-	List<Double> rates;
-	
+
+	@Column
+	String algorithm;
+
 	public Schedule() {
 
 	}
@@ -104,12 +106,21 @@ public class Schedule implements Cloneable{
 		this.resources = new ArrayList<Resource>();
 	}
 
-	public Schedule(Integer id, List<Resource> resources, List<Subject> subjects, List<Slot> slots) {
+	public Schedule(Integer id, List<Resource> resources,
+			List<Subject> subjects, List<Slot> slots) {
 		super();
 		this.id = id;
 		this.subjects = subjects;
 		this.resources = resources;
 		this.slots = slots;
+	}
+
+	public String getAlgorithm() {
+		return algorithm;
+	}
+
+	public void setAlgorithm(String algorithm) {
+		this.algorithm = algorithm;
 	}
 
 	public String getName() {
@@ -173,7 +184,7 @@ public class Schedule implements Cloneable{
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException{		
+	public Object clone() throws CloneNotSupportedException {
 		Schedule clone = new Schedule(name);
 		clone.id = id;
 		clone.days = days;
@@ -195,15 +206,22 @@ public class Schedule implements Cloneable{
 		clone.setPopulationSize(populationSize);
 		clone.setNumberOfClasses(numberOfClasses);
 		clone.setRate(rate);
-		clone.setRates(rates);
-		
+		clone.setAlgorithm(algorithm);
+
+		List<Rate> ratesCopy = new ArrayList<Rate>();
+		for (Rate rate : rates) {
+			ratesCopy.add((Rate) rate.clone());
+		}
+
+		clone.setRates(ratesCopy);
+
 		List<Resource> resCopy = new ArrayList<Resource>();
-		for(Resource res : resources){
+		for (Resource res : resources) {
 			resCopy.add((Resource) res.clone());
 		}
-		
+
 		List<Slot> slotsCopy = new ArrayList<Slot>();
-		for(Slot slot : slots){
+		for (Slot slot : slots) {
 			slotsCopy.add((Slot) slot.clone());
 		}
 		clone.slots = slotsCopy;
@@ -226,11 +244,11 @@ public class Schedule implements Cloneable{
 		this.iterations = iterations;
 	}
 
-	public List<Double> getRates() {
+	public List<Rate> getRates() {
 		return rates;
 	}
 
-	public void setRates(List<Double> rates) {
+	public void setRates(List<Rate> rates) {
 		this.rates = rates;
 	}
 
@@ -294,14 +312,14 @@ public class Schedule implements Cloneable{
 		this.name = name;
 	}
 
-    public Account getOwner() {
-        return owner;
-    }
+	public Account getOwner() {
+		return owner;
+	}
 
-    public void setOwner(Account owner) {
-        this.owner = owner;
-    }
-	
+	public void setOwner(Account owner) {
+		this.owner = owner;
+	}
+
 	public Integer getNumberOfClasses() {
 		return numberOfClasses;
 	}
@@ -309,7 +327,7 @@ public class Schedule implements Cloneable{
 	public void setNumberOfClasses(Integer numberOfClasses) {
 		this.numberOfClasses = numberOfClasses;
 	}
-	
+
 	public Double getCrossoverProbability() {
 		return crossoverProbability;
 	}
@@ -330,5 +348,5 @@ public class Schedule implements Cloneable{
 	public String toString() {
 		return "Schedule [rate=" + rate + ", populationSize=" + populationSize
 				+ ", iterations=" + iterations + ", rates=" + rates + "]";
-	}	
+	}
 }

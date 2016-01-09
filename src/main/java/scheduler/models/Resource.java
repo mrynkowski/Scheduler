@@ -9,21 +9,22 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Resource implements Cloneable{
+public class Resource implements Cloneable {
 
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	Integer id;
-	
+
 	@Column
 	String name;
-	
+
 	@Column
 	String type;
-	
+
 	@JsonIgnore
 	@ManyToOne(targetEntity = Schedule.class)
 	Schedule schedule;
-			
+
 	public Resource() {
 		super();
 	}
@@ -45,7 +46,7 @@ public class Resource implements Cloneable{
 		this.name = name;
 		this.type = type;
 	}
-	
+
 	public Resource(Integer id, String name, String type, Schedule schedule) {
 		super();
 		this.id = id;
@@ -85,7 +86,7 @@ public class Resource implements Cloneable{
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Resource clone = new Resource(name, type);
