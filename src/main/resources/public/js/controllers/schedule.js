@@ -258,21 +258,7 @@ module.controller("Schedule", function($scope, $http, menu, $location, $rootScop
 
 					graph.append("svg:path").attr("class", "line").attr("d",
 							line(data));
-					
-// line = d3.svg.line()
-//
-// .x(function(d,i) {
-// return xScale(i);
-// })
-// .y(function(d) {
-// return yScale(d.average);
-// })
-//					
-// graph.append("svg:path").attr("class", "line")
-// .attr('stroke', 'black')
-// .style("stroke-dasharray", ("3, 3"))
-// .attr("d", line(data));
-					
+									
 					graph.append("svg:text")
 					   .attr("x", m[0]-30)
 					   .attr("y", 0 - m[0]/2)
