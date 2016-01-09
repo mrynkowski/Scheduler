@@ -1,6 +1,6 @@
 # Scheduler
 
-Scheduler is a school timetables generating web application.
+Scheduler is a school timetable generating web application.
 
 * Spring Boot
 * AngularJS
