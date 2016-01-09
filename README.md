@@ -1,6 +1,6 @@
 # Scheduler
 
 * Spring Boot
-* JPA/Hibernate
 * AngularJS
+* JPA/Hibernate
 * PostgreSQL
